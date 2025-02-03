@@ -23,25 +23,24 @@ function parse_flags(flags)
 end
 
 function install_url(url, path, force)
-	if force == true then if fs.exists(path) then fs.delete(path) end end
+	--if force == true then if fs.exists(path) then fs.delete(path) end end
 
 	local success = shell.run("wget", url, path)
 	if success == false then error("Failed to install program!") end
 end
 
 function install(base, data, force)
-	local url        = base .. data.url
-	local identifier = data.identifier
-	local config     = data.config
+	local url    = base .. data.url
+	local path   = data.path
+	local config = data.config
 
-	if url        == "" then error("URL may not be empty!")        end
-	if identifier == "" then error("Identifier may not be empty!") end
+	if url  == "" then error("URL may not be empty!")  end
+	if path == "" then error("Path may not be empty!") end
 	
-	install_url(url, identifier, force)
+	install_url(url, path, force)
+	
 	if config ~= nil then
-		for _, value in ipairs(config) do
-			install(base, value, force)
-		end
+		install(base, config, force)
 	end
 end
 
