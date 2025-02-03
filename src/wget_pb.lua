@@ -36,8 +36,8 @@ function install(base, data)
 	if identifier == "" then error("Identifier may not be empty!") end
 	
 	install_url(url, identifier)
-	for _, value in ipairs(config) do
-		install_url(value.url, "cfg/" + value.identifier)
+	for _, field in ipairs(config) do
+		install_url(field.url, "cfg/" .. field.identifier)
 	end
 end
 
