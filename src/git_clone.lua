@@ -23,8 +23,6 @@ function parse_flags(flags)
 end
 
 function install_url(url, path, force)
-	local force = force or false
-
 	if force == true then if fs.exists(path) then fs.delete(path) end end
 
 	local success = shell.run("wget", url, path)
@@ -32,8 +30,6 @@ function install_url(url, path, force)
 end
 
 function install(base, data, force)
-	local force = force or false
-
 	local url        = base .. data.url
 	local identifier = data.identifier
 	local config     = data.config
@@ -41,9 +37,11 @@ function install(base, data, force)
 	if url        == "" then error("URL may not be empty!")        end
 	if identifier == "" then error("Identifier may not be empty!") end
 	
-	install_url(url, identifier)
-	for _, value in ipairs(config) do
-		install(base .. value.url, value.identifier, force)
+	install_url(url, identifier, force)
+	if config ~= nil then
+		for _, value in ipairs(config) do
+			install(base, value, force)
+		end
 	end
 end
 
@@ -58,9 +56,7 @@ function main()
 	if #flags == 0 then error("No flags have been supplied!") end
 
 	for _, value in ipairs(flags) do
-		if value == "f" then
-			force = true
-		end
+		if value == "f" then force = true end
 	end
 
 	for _, value in ipairs(flags) do
