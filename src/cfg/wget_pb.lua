@@ -1,6 +1,6 @@
 local urls =
 {
-    repository = "https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/", 
+    repository = [[https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/]], 
     
     required = 
     {

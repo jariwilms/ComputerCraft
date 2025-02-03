@@ -27,9 +27,8 @@ function install_url(url, identifier)
 	if success == false then error("Failed to install program!") end
 end
 
-function install(data)
-	local base       = data.repository
-	local url        = base + data.url
+function install(base, data)
+	local url        = base .. data.url
 	local identifier = data.identifier
 	local config     = data.config
 
@@ -46,7 +45,8 @@ function main()
 	term.clear()
 	term.setCursorPos(1, 1)
 
-	local flags = parse_flags(argv)
+	local flags      = parse_flags(argv)
+	local repository = config.repository
 
 	if #flags == 0 then error("No flags have been supplied!") end
 
@@ -55,14 +55,14 @@ function main()
 			local required = config.required
 
 			for _, value in ipairs(required) do
-				install(value)
+				install(repository, value)
 			end
 		end
 		if value == "o" then
 			local optional = config.optional
 
 			for _, value in ipairs(optional) do
-				install(value)
+				install(repository, value)
 			end
 		end
 	end
