@@ -4,7 +4,7 @@ local urls =
     
     required = 
     {
-        { url = "src/mine_area.lua", identifier = "mine_area", config = { url = "src/cfg/mine_area.lua", identifier = "mine_area" } }, 
+        { url = "src/mine_area.lua", identifier = "mine_area", config = { { url = "src/cfg/mine_area.lua", identifier = "mine_area" } } }, 
     }, 
     optional = 
     {
