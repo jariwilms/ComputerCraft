@@ -25,8 +25,10 @@ end
 function install_url(url, path, force)
 	if fs.exists(path) then 
 		if force == true then 
+			print("Updating " .. path)
 			fs.delete(path) 
 		else 
+			print(path .. " already exists")
 			return 
 		end 
 	end
