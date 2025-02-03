@@ -1,0 +1,13 @@
+local urls =
+{
+    required = 
+    {
+        { url = "EYJCxzNp", identifier = "mine_area", config = { url = "", identifier = "mine_area" } }, 
+    }, 
+    optional = 
+    {
+        { url = "", identifier = "", config = {} }, 
+    }
+}
+
+return urls
