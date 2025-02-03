@@ -23,10 +23,15 @@ function parse_flags(flags)
 end
 
 function install_url(url, path, force)
-	--if force == true then if fs.exists(path) then fs.delete(path) end end
+	if fs.exists(path) then 
+		if force == true then 
+			fs.delete(path) 
+		else 
+			return 
+		end 
+	end
 
-	local success = shell.run("wget", url, path)
-	if success == false then error("Failed to install program!") end
+	if shell.run("wget", url, path) == false then error("Failed to install program! Path: " .. path) end
 end
 
 function install(base, data, force)
@@ -38,7 +43,7 @@ function install(base, data, force)
 	if path == "" then error("Path may not be empty!") end
 	
 	install_url(url, path, force)
-	
+
 	if config ~= nil then
 		install(base, config, force)
 	end
@@ -52,24 +57,19 @@ function main()
 	local repository = config.repository
 	local force      = false
 
-	if #flags == 0 then error("No flags have been supplied!") end
-
 	for _, value in ipairs(flags) do
 		if value == "f" then force = true end
 	end
 
+	for _, value in ipairs(config.required) do
+		print("Installing default programs.")
+		install(repository, value, force)
+	end
+
 	for _, value in ipairs(flags) do
-		if value == "r" then
-			local required = config.required
-
-			for _, value in ipairs(required) do
-				install(repository, value, force)
-			end
-		end
 		if value == "o" then
-			local optional = config.optional
-
-			for _, value in ipairs(optional) do
+			print("Installing optional programs")
+			for _, value in ipairs(config.optional) do
 				install(repository, value, force)
 			end
 		end
