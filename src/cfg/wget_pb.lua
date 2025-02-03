@@ -1,10 +1,10 @@
 local urls =
 {
-    base = "https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/", 
+    repository = "https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/", 
     
     required = 
     {
-        { url = "src/wget_pb", identifier = "mine_area", config = { url = "", identifier = "mine_area" } }, 
+        { url = "src/wget_pb.lua", identifier = "mine_area", config = { url = "", identifier = "mine_area" } }, 
     }, 
     optional = 
     {

@@ -6,7 +6,7 @@ local argc = #argv
 function parse_flags(flags)
 	local result = {}
 
-	for index, value in ipairs(flags) do
+	for _, value in ipairs(flags) do
 		local firstCharacter = string.sub(value, 1, 1)
 
 		if firstCharacter == "-" then
@@ -28,7 +28,7 @@ function install_url(url, identifier)
 end
 
 function install(data)
-	local base       = data.base
+	local base       = data.repository
 	local url        = base + data.url
 	local identifier = data.identifier
 	local config     = data.config
@@ -37,7 +37,7 @@ function install(data)
 	if identifier == "" then error("Identifier may not be empty!") end
 	
 	install_url(url, identifier)
-	for index, value in ipairs(config) do
+	for _, value in ipairs(config) do
 		install_url(value.url, "cfg/" + value.identifier)
 	end
 end
@@ -48,18 +48,20 @@ function main()
 
 	local flags = parse_flags(argv)
 
-	for index, value in ipairs(flags) do
+	if #flags == 0 then error("No flags have been supplied!") end
+
+	for _, value in ipairs(flags) do
 		if value == "r" then
 			local required = config.required
 
-			for index, value in ipairs(required) do
+			for _, value in ipairs(required) do
 				install(value)
 			end
 		end
 		if value == "o" then
 			local optional = config.optional
 
-			for index, value in ipairs(optional) do
+			for _, value in ipairs(optional) do
 				install(value)
 			end
 		end
