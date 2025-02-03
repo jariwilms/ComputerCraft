@@ -140,7 +140,7 @@ end
 
 function RunTreeFarm()
 	local TimesMovedForward = 0
-	local Maxforward = TreeConfig:getData("Lenght")
+	local Maxforward = tonumber(TreeConfig:getData("Lenght"))
 	
 	while CanStart() do
 		for i=1, Maxforward do
