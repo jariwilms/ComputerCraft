@@ -162,9 +162,9 @@ function RunFarm()
 			if TimesMovedY == AreaY then
 				print("Returning to Start pos")
 				if TimesMovedY % 2 == 0 then
-					turtle.turnRight()
-				else
 					turtle.turnLeft()
+				else
+					turtle.turnRight()
 				end
 				
 				for i=1, AreaX-1 do
@@ -172,9 +172,6 @@ function RunFarm()
 				end
 				
 				if TimesMovedY % 2 == 0 then
-					turtle.turnRight()
-					Farming = false
-				else
 					turtle.turnLeft()
 					for i=1, AreaX-1 do
 						turtle.forward()
@@ -182,33 +179,40 @@ function RunFarm()
 					turtle.turnLeft()
 					turtle.turnLeft()
 					Farming = false
+				else
+					turtle.turnRight()
+					Farming = false
 				end
 			else
-			
-				print("Check Crop")
-				CheckCrop(Seed, Age)
 				
 				print("Returning to Start pos")
 				for i=1, AreaX-1 do
+					print("Check Crop")
+					CheckCrop(Seed, Age)
 					print("Forward")
 					turtle.forward()
 				end
 				
+				print("Check Crop")
+				CheckCrop(Seed, Age)
+				
 				print("Moving to next row")
-				if TimesMovedY % 2 == 0 then
-					turtle.turnRight()
-					turtle.forward()
-					turtle.turnRight()
-				else
-					turtle.turnLeft()
-					turtle.forward()
-					turtle.turnLeft()
+				if TimesMovedY+1 ~= AreaY then
+					if TimesMovedY % 2 == 0 then
+						turtle.turnRight()
+						turtle.forward()
+						turtle.turnRight()
+					else
+						turtle.turnLeft()
+						turtle.forward()
+						turtle.turnLeft()
+					end
 				end
 			end
 			
 			TimesMovedY = TimesMovedY+1
 		end
-		sleep(500)
+		sleep(200)
 		TimesMovedY = 0
 	end
 end
