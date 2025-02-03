@@ -6,16 +6,12 @@ local argc = #argv
 function parse_flags(flags)
 	local result = {}
 
-	print("Flags", flags)
-
 	for index, value in ipairs(flags) do
-		local firstCharacter = string.sub(flags, 1, 1)
-		print("fst char: ", firstCharacter)
+		local firstCharacter = string.sub(value, 1, 1)
 
 		if firstCharacter == "-" then
 			for i = 2, #value do
 				local c = string.sub(value, i, i)
-				print("c: ", c)
 				table.insert(result, c)
 			end
 		else
@@ -23,20 +19,19 @@ function parse_flags(flags)
 		end
 	end
 
-	print("Result: ", result)
 	return result
 end
 
 function install_url(url, identifier)
-	local success = shell.run("pastebin", "get", url, identifier)
+	local success = shell.run("wget", url, identifier)
 	if success == false then error("Failed to install program!") end
 end
 
 function install(data)
-	local url        = data.url
+	local base       = data.base
+	local url        = base + data.url
 	local identifier = data.identifier
 	local config     = data.config
-	local success    = false
 
 	if url        == "" then error("URL may not be empty!")        end
 	if identifier == "" then error("Identifier may not be empty!") end
