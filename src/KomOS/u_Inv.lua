@@ -87,23 +87,35 @@ function Inventory:Defrag()
         local data = turtle.getItemDetail(i)
         if data ~= nil then
             print(data["name"].. " Found")
-            local InvData, Slots = Inventory:GetAllItem(data["name"])
-            print(tostring(Slots).. " number of slots found")
-            if Slots > 1 and data["count"] > 0 then
-                for j=1, Slots do
-                    if i == InvData[j]["slot"] then
-                        break
+            local DefragInProc = true
+            while DefragInProc do
+                local InvData, Slots = Inventory:GetAllItem(data["name"])
+                print(tostring(Slots).. " number of slots found")
+                if Slots > 1 and data["count"] > 0 then
+                    for j=1, Slots do
+                        if i == InvData[j]["slot"] then
+                            break
+                        end
+                        local NextSlot = j+1
+                        if NextSlot > Slots then
+                            NextSlot = 1
+                        end
+                        local SpaceLeft = turtle.getItemSpace(InvData[j]["slot"])
+                        print(tostring(SpaceLeft).. " space left")
+                        if SpaceLeft > 0 and InvData[NextSlot]["count"] > 0 and turtle.getItemSpace(InvData[NextSlot]["slot"]) ~= 0 then
+                            print("Moving")
+                            turtle.select(InvData[j]["slot"])
+                            turtle.transferTo(InvData[NextSlot]["slot"], math.min(SpaceLeft,InvData[NextSlot]["count"]))
+                        end
                     end
-                    local NextSlot = j+1
-                    if NextSlot > Slots then
-                        NextSlot = 1
+                    local SlotsNotFilled = 0
+                    for j=1, Slots do
+                        if InvData[j]["count"] ~= 0 or turtle.getItemSpace(InvData[j]["slot"]) ~= 0 then
+                            SlotsNotFilled = SlotsNotFilled + 1
+                        end
                     end
-                    local SpaceLeft = turtle.getItemSpace(InvData[j]["slot"])
-                    print(tostring(SpaceLeft).. " space left")
-                    if SpaceLeft > 0 and InvData[NextSlot]["count"] > 0 and turtle.getItemSpace(InvData[NextSlot]["slot"]) ~= 0 then
-                        print("Moving")
-                        turtle.select(InvData[j]["slot"])
-                        turtle.transferTo(InvData[NextSlot]["slot"], math.min(SpaceLeft,InvData[NextSlot]["count"]))
+                    if SlotsNotFilled < 2 then
+                        DefragInProc = false
                     end
                 end
             end
