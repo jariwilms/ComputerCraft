@@ -86,8 +86,8 @@ function Inventory:Defrag()
     for i=1, 16 do
         local success, data = turtle.getItemDetail(i)
         if success then
-            local InvData, Slots = Inventory:GetAllItem(data.name)
-            if Slots > 1 and data.count > 0 then
+            local InvData, Slots = Inventory:GetAllItem(data["name"])
+            if Slots > 1 and data["count"] > 0 then
                 for j=1, Slots do
                     if i == InvData[j].slot then
                         break
