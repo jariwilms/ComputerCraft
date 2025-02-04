@@ -172,14 +172,11 @@ function main()
 	term.clear()
 	term.setCursorPos(1, 1)
 
-	io.write("Starting Turtle\n")
-
-
-
-	local dimensions = { x = 0, y = 0, z = 0 }
-    local volume     = dimensions.x * dimensions.y * dimensions.z
-	local reply      = ""
-	local index      = 1
+	local dimensions      = { x = 0, y = 0, z = 0 }
+	local dimensionString = { "X", "Y", "Z" }
+    local volume          = dimensions.x * dimensions.y * dimensions.z
+	local reply           = ""
+	local index           = 1
 
 	if argc == 3 then
 		for key, _ in pairs(dimensions) do
@@ -188,6 +185,17 @@ function main()
 		end
 	elseif argc == 0 then
 		while true do
+			term.clear()
+			term.setCursorPos(1, 1)
+
+			for key, _ in pairs(dimensions) do
+				io.write("Enter " .. dimensionString[index] .. " coordinate: ")
+				reply = io.read("*n")
+				if reply == nil or #reply == 0 then break end
+
+				dimensions[key] = math.floor(reply)
+			end
+
 			io.write("Is the turtle on a chest? [y/N] ")
 			reply = string.lower(read())
 			
