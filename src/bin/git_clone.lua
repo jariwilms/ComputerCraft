@@ -1,4 +1,5 @@
-local config = require("cfg/git_clone")
+local config = require("/cfg/git_clone")
+local iou    = require("/bin/io_utils")
 
 local argv = {...}
 local argc = #argv
@@ -11,8 +12,8 @@ function parse_flags(flags)
 
 		if firstCharacter == "-" then
 			for i = 2, #value do
-				local c = string.sub(value, i, i)
-				table.insert(result, c)
+				local character = string.sub(value, i, i)
+				table.insert(result, character)
 			end
 		else
 			error("Invalid argument!")
@@ -25,15 +26,16 @@ end
 function install_url(url, path, force)
 	if fs.exists(path) then 
 		if force == true then 
-			print("Updating " .. path)
+			io.write("Reinstalling " .. path .. "\n")
 			fs.delete(path) 
 		else 
-			print(path .. " already exists")
-			return 
+			io.write(path .. " already exists" .. "\n")
+			return
 		end 
 	end
 
-	if shell.run("wget", url, path) == false then error("Failed to install program! Path: " .. path) end
+	local success = iou.redirect("dev/nil", shell.run, "wget", url, path)
+	if success == false then error("Failed to install program! Path: " .. path) end
 end
 
 function install(base, data, force)
@@ -45,10 +47,7 @@ function install(base, data, force)
 	if path == "" then error("Path may not be empty!") end
 	
 	install_url(url, path, force)
-
-	if config ~= nil then
-		install(base, config, force)
-	end
+	if config ~= nil then install(base, config, force) end
 end
 
 function main()
@@ -64,19 +63,19 @@ function main()
 	end
 
 	for _, value in ipairs(config.required) do
-		print("Installing default programs.")
+		io.write("Installing default programs\n")
 		install(repository, value, force)
 	end
 
 	for _, value in ipairs(flags) do
 		if value == "o" then
-			print("Installing optional programs")
+			io.write("Installing optional programs\n")
+
 			for _, value in ipairs(config.optional) do
 				install(repository, value, force)
 			end
 		end
 	end
-	
 end
 
 main()
