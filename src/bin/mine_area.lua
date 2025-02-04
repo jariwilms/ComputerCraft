@@ -100,9 +100,9 @@ function dig(digDirection)
 		if     digDirection == DigDirection.Front then
 			turtle.dig()
 		elseif digDirection == DigDirection.Up    then
-			turtle.digDown()
-		elseif digDirection == DigDirection.Down  then
 			turtle.digUp()
+		elseif digDirection == DigDirection.Down  then
+			turtle.digDown()
 		end
 	end
 end
@@ -210,7 +210,7 @@ function main()
 			end
 
 
-			
+
 			io.write("Dimensions: <", dimensions.x, ', ', dimensions.y, ', ', dimensions.z, ">\n")
 			io.write("OnChest:    ",  tostring(config.OnChest), "\n")
             io.write("\n")
