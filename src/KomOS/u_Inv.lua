@@ -94,10 +94,12 @@ function Inventory:Defrag()
                 if Slots > 1 and data["count"] > 0 then
                     for j=1, Slots do
                         if i == InvData[j]["slot"] then
+                            print("i == slot")
                             break
                         end
                         local NextSlot = j+1
                         if NextSlot > Slots then
+                            print("NextSlot = 1")
                             NextSlot = 1
                         end
                         local SpaceLeft = turtle.getItemSpace(InvData[j]["slot"])
