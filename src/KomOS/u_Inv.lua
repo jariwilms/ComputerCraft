@@ -84,8 +84,8 @@ end
 
 function Inventory:Defrag()
     for i=1, 15 do
-        local success, data = turtle.getItemDetail(i)
-        if success then
+        local data = turtle.getItemDetail(i)
+        if data ~= nil then
             local InvData, Slots = Inventory:GetAllItem(data["name"])
             if Slots > 1 and data["count"] > 0 then
                 for j=1, Slots do
