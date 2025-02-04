@@ -3,7 +3,7 @@
 --Globals
 
 --Class
-ConfigReader = {data = {
+local ConfigReader = {data = {
 		currentPath = "none",
 	}}
 	
@@ -56,3 +56,5 @@ function ConfigReader:getString (member)
 	error("did not find variable")
 	return 0
 end
+
+return ConfigReader

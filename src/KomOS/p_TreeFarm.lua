@@ -1,7 +1,7 @@
 --tree farm Program
 
 --Includes
-os.loadAPI("u_Config")
+local u_Config  = require("u_Config")
 
 --Global
 
