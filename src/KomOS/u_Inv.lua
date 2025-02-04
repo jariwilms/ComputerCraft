@@ -30,8 +30,8 @@ end
 
 function Inventory:GetFirstItem(Item)
     for i=1, 16 do
-        local success, data = turtle.getItemDetail(i)
-        if success then
+        local data = turtle.getItemDetail(i)
+        if data ~= nil then
             if string.find(data["name"], Item) then
                 return true, i, data["count"]
             end
@@ -121,3 +121,5 @@ function Inventory:Defrag()
     end
     return true
 end
+
+return Inventory
