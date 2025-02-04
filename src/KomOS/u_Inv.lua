@@ -86,14 +86,18 @@ function Inventory:Defrag()
     for i=1, 15 do
         local data = turtle.getItemDetail(i)
         if data ~= nil then
+            print(data["name"].. " Found")
             local InvData, Slots = Inventory:GetAllItem(data["name"])
+            print(tostring(Slots).. " number of slots found")
             if Slots > 1 and data["count"] > 0 then
                 for j=1, Slots do
                     if i == InvData[j]["slot"] then
                         break
                     end
                     local SpaceLeft = turtle.getItemSpace(InvData[j]["slot"])
+                    print(tostring(SpaceLeft).. " space left")
                     if SpaceLeft > 0 and InvData["count"] > 0 and turtle.getItemSpace(InvData[j+1]["slot"]) ~= 0 then
+                        print("Moving")
                         turtle.select(InvData[j]["slot"])
                         turtle.transferTo(InvData[j+1]["slot"], math.min(SpaceLeft,InvData[j+1]["count"]))
                     end
