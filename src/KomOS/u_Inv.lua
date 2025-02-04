@@ -108,17 +108,18 @@ function Inventory:Defrag()
                             turtle.transferTo(InvData[NextSlot]["slot"], math.min(SpaceLeft,InvData[NextSlot]["count"]))
                         end
                     end
-                    local SlotsNotFilled = 0
-                    print("Checking if defrag is complete for item")
-                    for j=1, Slots do
-                        if InvData[j]["count"] ~= 0 and turtle.getItemSpace(InvData[j]["slot"]) ~= 0 then
-                            SlotsNotFilled = SlotsNotFilled + 1
-                        end
+                end
+                InvData, Slots = Inventory:GetAllItem(data["name"])
+                local SlotsNotFilled = 0
+                print("Checking if defrag is complete for item")
+                for j=1, Slots do
+                    if InvData[j]["count"] ~= 0 and turtle.getItemSpace(InvData[j]["slot"]) ~= 0 then
+                        SlotsNotFilled = SlotsNotFilled + 1
                     end
-                    print("Number of slots not finished: "..tostring(SlotsNotFilled))
-                    if SlotsNotFilled < 2 then
-                        DefragInProc = false
-                    end
+                end
+                print("Number of slots not finished: "..tostring(SlotsNotFilled))
+                if SlotsNotFilled < 2 then
+                    DefragInProc = false
                 end
             end
         end
