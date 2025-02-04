@@ -18,14 +18,14 @@
 --end
 
 function DrawImage(x,y,image)
-	for i = 0, #image do
+	for i = 1, #image do
 		term.setCursorPos(x ,y+i)
 		term.write(image[i+1])
 	end
 end
 
 function DrawImageMonitor(x,y,monitor,image)
-	for i = 0, #image do
+	for i = 1, #image do
 		monitor.setCursorPos(x,y+i)
 		monitor.write(image[i+1])
 	end
