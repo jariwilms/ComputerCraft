@@ -3,7 +3,7 @@
 --Includes
 
 --os.loadAPI("u_Utils")
-os.loadAPI("u_Sprite")
+local Sprite = require("u_Sprite")
 
 --Global
 Selected = 1
@@ -106,10 +106,9 @@ function Agent:OnLoad()
 end
 
 function Agent:DrawApp(img,name,bselected,x,y)
-	--u_Sprite.LoadImage(img)
-	u_Sprite.DrawImage(x,y,img)
+	Sprite.DrawImage(x,y,img)
 	
-	local imagesizeX, imagesizey = u_Sprite.GetSize(img)
+	local imagesizeX, imagesizey = Sprite.GetSize(img)
 	local len = #name
 	local xtextpos = (x+imagesizey-len/2)
 	
