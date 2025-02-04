@@ -24,7 +24,7 @@ end
 
 function install_url(url, path, force)
 	if fs.exists(path) then 
-		if force == true then 
+		if force then 
 			io.write("Reinstalling " .. path .. "\n")
 			fs.delete(path) 
 		else 
@@ -33,7 +33,7 @@ function install_url(url, path, force)
 		end 
 	end
 
-	if not shell.run("dev/nil", "wget", url, path) then
+	if not shell.run("wget", url, path) then
 		error("Failed to install program! Path: " .. path)
 	end
 end
@@ -76,6 +76,8 @@ function main()
 			end
 		end
 	end
+
+	io.write("Intallation complete")
 end
 
 main()
