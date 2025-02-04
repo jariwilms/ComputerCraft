@@ -71,7 +71,7 @@ function main()
 		end
 	end
 
-	io.write("Intallation complete")
+	io.write("Installation complete\n")
 end
 
 main()
