@@ -83,7 +83,7 @@ function Inventory:DropAllOfItem(Item)
 end
 
 function Inventory:Defrag()
-    for i=1, 16 do
+    for i=1, 15 do
         local success, data = turtle.getItemDetail(i)
         if success then
             local InvData, Slots = Inventory:GetAllItem(data["name"])
