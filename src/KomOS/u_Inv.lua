@@ -44,8 +44,8 @@ function Inventory:GetAllItem(Item)
     local ItemSlotsFound = 0
     local ItemData = {}
     for i=1, 16 do
-        local success, data = turtle.getItemDetail(i)
-        if success then
+        local data = turtle.getItemDetail(i)
+        if data ~= nil then
             if string.find(data["name"], Item) then
                 ItemSlotsFound = ItemSlotsFound + 1
                 ItemData[ItemSlotsFound] = {slot = i,  count = data.count}
