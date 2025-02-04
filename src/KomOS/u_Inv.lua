@@ -22,7 +22,7 @@ function Inventory:GetInv()
 		if data == nil then
 			InvData[i] = {name = "nil", count = 0}
         else
-            InvData[i] = {name = data["name"], count = data["count"]}
+            InvData[i] = {name = data.name, count = data.count}
         end
 	end
     return InvData
@@ -33,7 +33,7 @@ function Inventory:GetFirstItem(Item)
         local success, data = turtle.getItemDetail(i)
         if success then
             if string.find(data["name"], Item) then
-                return true, i, data["count"]
+                return true, i, data.count
             end
         end
     end
@@ -48,7 +48,7 @@ function Inventory:GetAllItem(Item)
         if success then
             if string.find(data["name"], Item) then
                 ItemSlotsFound = ItemSlotsFound + 1
-                ItemData[ItemSlotsFound] = {slot = i,  count = data["count"]}
+                ItemData[ItemSlotsFound] = {slot = i,  count = data.count}
             end
         end
     end
@@ -86,7 +86,7 @@ function Inventory:Defrag()
     for i=1, 16 do
         local success, data = turtle.getItemDetail(i)
         if success then
-            local InvData, Slots = Inventory:GetAllItem(data["name"])
+            local InvData, Slots = Inventory:GetAllItem(data.name)
             if Slots > 1 and data.count > 0 then
                 for j=1, Slots do
                     if i == InvData[j].slot then
