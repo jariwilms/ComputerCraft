@@ -22,7 +22,7 @@ function Inventory:GetInv()
 		if data == nil then
 			InvData[i] = {name = "nil", count = 0}
         else
-            InvData[i] = {name = data.name, count = data.count}
+            InvData[i] = {name = data["name"], count = data["count"]}
         end
 	end
     return InvData
