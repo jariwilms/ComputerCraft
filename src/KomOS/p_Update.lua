@@ -30,7 +30,7 @@ function InstallReq (name, PastebinLink)
 		print(name.." Is already Installed, deleting and reinstalling")
 		shell.run("delete", name)
 	end
-	shell.run("pastebin", "get", PastebinLink, name)
+	shell.run("wget", PastebinLink, name)
 	print("\n")
 end
 
@@ -77,7 +77,7 @@ end
 term.setCursorPos(1, 1)
 
 function InstallOptions()
-    InstallOptinal("p_TreeFarmer", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_TreeFarm.lua")
+	InstallOptinal("p_TreeFarmer", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_TreeFarm.lua")
 	InstallOptinal("p_Miner", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_Mine.lua")
 	InstallOptinal("p_Farm", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_Farm.lua")
 end
