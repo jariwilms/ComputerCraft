@@ -38,9 +38,8 @@ local DigDirection =
 	Down  = 3, 
 }
 
-
-function turn(rotation, amount, orientation)
-	for _ = 1, amount do
+function turn(rotation, repetitions, orientation)
+	for _ = 1, repetitions do
 		if rotation == Rotation.Left then
 			if turtle.turnLeft() then
 				orientation = orientation + 1
@@ -50,34 +49,43 @@ function turn(rotation, amount, orientation)
 		if rotation == Rotation.Right then
 			if turtle.turnRight() then
 				orientation = orientation - 1
-				if orientation == 5 then orientation = Orientation.Right end
+				if orientation == 0 then orientation = Orientation.Right end
 			end
 		end
 	end
+
+	return orientation
 end
 
 function move(direction, distance, position, orientation)
 	for _ = 1, distance do
-		if direction == Direction.Forward then
+		if     direction == Direction.Forward  then
 			if turtle.forward() then
+				if orientation == Orientation.Forward  then position.z = position.z + 1 end
+				if orientation == Orientation.Left     then position.x = position.x - 1 end
+				if orientation == Orientation.Backward then position.z = position.z - 1 end
+				if orientation == Orientation.Right    then position.x = position.x + 1 end
 			end
-		end
-		if direction == Direction.Backward then
+		elseif direction == Direction.Backward then
 			if turtle.back() then
+				if orientation == Orientation.Forward  then position.z = position.z - 1 end
+				if orientation == Orientation.Left     then position.x = position.x + 1 end
+				if orientation == Orientation.Backward then position.z = position.z + 1 end
+				if orientation == Orientation.Right    then position.x = position.x - 1 end
 			end
-		end
-		if direction == Direction.Left then
-			error("Not implemented!")
-		end
-		if direction == Direction.Right then
-			error("Not implemented!")
-		end
-		if direction == Direction.Up then
+		elseif direction == Direction.Left     then
+			orientation = turn(Rotation.Left, 1, orientation)
+			move(Direction.Forward, 1, position, orientation)
+			orientation = turn(Rotation.Right, 1, orientation)
+		elseif direction == Direction.Right    then
+			orientation = turn(Rotation.Right, 1, orientation)
+			move(Direction.Forward, 1, position, orientation)
+			orientation = turn(Rotation.Left, 1, orientation)
+		elseif direction == Direction.Up       then
 			if turtle.up() then
 				position.y = position.y + 1
 			end
-		end
-		if direction == Direction.Down then
+		elseif direction == Direction.Down     then
 			if turtle.down() then
 				position.y = position.y - 1
 			end
@@ -110,17 +118,17 @@ function mine_area(dimensions)
 	dig(DigDirection.Front)
 	move(Direction.Forward, 1, position, orientation)
 
-    for i = 1, dimensions.y - 1 do
-        for j = 1, dimensions.x do
-            for k = 1, dimensions.z - 1 do
+    for _ = 1, dimensions.y - 1 do
+        for _ = 1, dimensions.x do
+            for _ = 1, dimensions.z - 1 do
 				dig(DigDirection.Front)
 				move(Direction.Forward, 1, position, orientation)
             end
 
-			turn(currentRotate, 1, orientation)
+			orientation = turn(currentRotate, 1, orientation)
 			dig(DigDirection.Front)
 			move(Direction.Forward, 1, position, orientation)
-			turn(currentRotate, 1, orientation)
+			orientation = turn(currentRotate, 1, orientation)
 
 			if currentRotate == Rotation.Left  then currentRotate = Rotation.Right end
 			if currentRotate == Rotation.Right then currentRotate = Rotation.Left  end
@@ -128,17 +136,11 @@ function mine_area(dimensions)
 
 		dig(DigDirection.Up)
 		move(Direction.Up, 1, position, orientation)
-		turn(Rotation.Left, 1, orientation)
-		turn(Rotation.Left, 1, orientation)
+		orientation = turn(Rotation.Left, 1, orientation)
+		orientation = turn(Rotation.Left, 1, orientation)
     end
 	
-	return_to_origin()
 	io.write("Excavation complete!\n")
-end
-
-
-function return_to_origin()
-
 end
 
 function calculate_distance(dimensions)

@@ -23,19 +23,13 @@ function parse_flags(flags)
 end
 
 function install_url(url, path, force)
-	if fs.exists(path) then 
-		if force then 
-			io.write("Reinstalling " .. path .. "\n")
-			fs.delete(path) 
-		else 
-			io.write(path .. " already exists" .. "\n")
-			return
-		end 
+	if fs.exists(path) and not force then return
+	else                                  fs.delete(path)
 	end
 
-	if not shell.run("wget", url, path) then
-		error("Failed to install program! Path: " .. path)
-	end
+	io.output("/dev/nil")
+	shell.run("wget", url, path)
+	io.output(io.stdout)
 end
 
 function install(base, data, force)
@@ -77,7 +71,7 @@ function main()
 		end
 	end
 
-	io.write("Intallation complete")
+	io.write("Installation complete\n")
 end
 
 main()
