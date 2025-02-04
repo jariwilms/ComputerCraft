@@ -1,5 +1,4 @@
 local config = require("/cfg/git_clone")
-local iou    = require("/bin/io_utils")
 
 local argv = {...}
 local argc = #argv
@@ -34,8 +33,9 @@ function install_url(url, path, force)
 		end 
 	end
 
-	local success = iou.redirect("dev/nil", shell.run, "wget", url, path)
-	if success == false then error("Failed to install program! Path: " .. path) end
+	if not shell.run("dev/nil", "wget", url, path) then
+		error("Failed to install program! Path: " .. path)
+	end
 end
 
 function install(base, data, force)
