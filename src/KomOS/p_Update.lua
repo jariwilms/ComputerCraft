@@ -32,6 +32,7 @@ function InstallReq (name, Link)
 	end
 	shell.run("wget", Link, name)
 	print("\n")
+	sleep(1)
 end
 
 function SetupStartup()
