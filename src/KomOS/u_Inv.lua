@@ -94,6 +94,7 @@ function Inventory:Defrag()
                 if Slots > 1 and data["count"] > 0 then
                     for j=1, Slots do
                         if i ~= InvData[j]["slot"] then
+                            print("i ~= slot")
                             local NextSlot = j+1
                             if NextSlot > Slots then
                                 NextSlot = 1
