@@ -109,11 +109,13 @@ function Inventory:Defrag()
                         end
                     end
                     local SlotsNotFilled = 0
+                    print("Checking if defrag is complete for item")
                     for j=1, Slots do
                         if InvData[j]["count"] ~= 0 and turtle.getItemSpace(InvData[j]["slot"]) ~= 0 then
                             SlotsNotFilled = SlotsNotFilled + 1
                         end
                     end
+                    print("Number of slots not finished: "..tostring(SlotsNotFilled))
                     if SlotsNotFilled < 2 then
                         DefragInProc = false
                     end
