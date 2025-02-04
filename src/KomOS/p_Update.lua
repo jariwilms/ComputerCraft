@@ -55,16 +55,19 @@ end
 
 function InstallAllReq()
     --Install utils
-	InstallReq("u_Utils", "1ER4YDVy")
-	InstallReq("u_Sprite", "ch2vDQmA")
-	InstallReq("u_Config", "CRM2JH0S")
-	InstallReq("u_Area", "NFn54B08")
+	InstallReq("u_Sprite", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Sprite.lua")
+	InstallReq("u_Config", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Config.lua")
+	InstallReq("u_Area", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Area.lua")
+	InstallReq("u_Inv", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Inv.lua")
 
 	--OS
-	InstallReq("KomOS", "byxjwqMv")
+	InstallReq("KomOS", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/KomOS.lua")
 
 	--programs
-	InstallReq("p_Refuel", "3Gq09d8G")
+	InstallReq("p_Refuel", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_Refuel.lua")
+
+	--Debug
+	InstallReq("Debug_Test", "https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/src/KomOS/Debug_Test.lua")
 	
 	--Create startup
 	SetupStartup()
@@ -74,9 +77,9 @@ end
 term.setCursorPos(1, 1)
 
 function InstallOptions()
-    InstallOptinal("p_TreeFarmer", "3TPy8Ewx")
-	InstallOptinal("p_Miner", "PV36b31K")
-	InstallOptinal("p_Farm", "7y2RqRmA")
+    InstallOptinal("p_TreeFarmer", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_TreeFarm.lua")
+	InstallOptinal("p_Miner", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_Mine.lua")
+	InstallOptinal("p_Farm", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_Farm.lua")
 end
 
 --Instal requireds (update system)

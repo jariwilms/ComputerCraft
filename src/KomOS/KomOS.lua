@@ -289,7 +289,7 @@ function Agent:MainMenuOnEnter()
 		Run = false
 		term.setCursorPos(1, 1)
 		shell.run("delete", "p_Update")
-		shell.run("pastebin", "get", "NEv9W17k", "p_Update")
+		shell.run("wget", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_Update.lua", "p_Update")
 		shell.run("p_Update", "ReqOnly")
 		exit = true
 	elseif Selected==8 then
@@ -297,7 +297,7 @@ function Agent:MainMenuOnEnter()
 		Run = false
 		term.setCursorPos(1, 1)
 		shell.run("delete", "p_Update")
-		shell.run("pastebin", "get", "NEv9W17k", "p_Update")
+		shell.run("wget", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_Update.lua", "p_Update")
 		shell.run("p_Update", "OptionOnly")
 		exit = true
 	elseif Selected==9 then
