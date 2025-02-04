@@ -98,8 +98,8 @@ function Inventory:Defrag()
                             print(tostring(SpaceLeft).. " space left")
                             if SpaceLeft > 0 and InvData[j]["count"] > 0 then
                                 print("Moving")
-                                turtle.select(i)
-                                turtle.transferTo(InvData[j]["slot"], math.min(SpaceLeft,InvData[j]["count"]))
+                                turtle.select(InvData[j]["slot"])
+                                turtle.transferTo(i, math.min(SpaceLeft,InvData[j]["count"]))
                             end
                         end
                     end
