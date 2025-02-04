@@ -23,8 +23,8 @@ function parse_flags(flags)
 end
 
 function install_url(url, path, force)
-	if fs.exists(path) and force then fs.delete(path)
-	else                              return
+	if fs.exists(path) and not force then return
+	else                                  fs.delete(path)
 	end
 
 	io.output("/dev/nil")
