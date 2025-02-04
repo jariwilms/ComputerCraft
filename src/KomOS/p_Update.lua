@@ -16,21 +16,21 @@ programs = shell.programs()
 --Class
 
 --functions
-function InstallOptinal(name, PastebinLink)
+function InstallOptinal(name, Link)
 	print("Do you want to install: "..name.."?")
 	print("type y to install")
 	local reply = read()
 	if reply == "y" then
-		InstallReq(name, PastebinLink)
+		InstallReq(name, Link)
 	end
 end
 
-function InstallReq (name, PastebinLink)
+function InstallReq (name, Link)
 	if has_value (programs, name) then
 		print(name.." Is already Installed, deleting and reinstalling")
 		shell.run("delete", name)
 	end
-	shell.run("wget", PastebinLink, name)
+	shell.run("wget", Link, name)
 	print("\n")
 end
 
@@ -75,6 +75,7 @@ end
 
 --Start
 term.setCursorPos(1, 1)
+term.clear()
 
 function InstallOptions()
 	InstallOptinal("p_TreeFarmer", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_TreeFarm.lua")
