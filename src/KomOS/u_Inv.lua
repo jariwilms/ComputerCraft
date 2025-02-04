@@ -110,7 +110,7 @@ function Inventory:Defrag()
                     end
                     local SlotsNotFilled = 0
                     for j=1, Slots do
-                        if InvData[j]["count"] ~= 0 or turtle.getItemSpace(InvData[j]["slot"]) ~= 0 then
+                        if InvData[j]["count"] ~= 0 and turtle.getItemSpace(InvData[j]["slot"]) ~= 0 then
                             SlotsNotFilled = SlotsNotFilled + 1
                         end
                     end
