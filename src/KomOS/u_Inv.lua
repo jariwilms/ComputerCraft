@@ -72,6 +72,16 @@ function Inventory:SelectItem(Item)
     return success
 end
 
+function Inventory:IsFull()
+    for i=1, 16 do
+        local data = turtle.getItemDetail(i)
+        if data ~= nil then
+           return false
+        end
+    end
+    return true
+end
+
 function Inventory:DropAllOfItem(Item)
     local InvData, Slots = Inventory:GetAllItem(Item)
     local count = 0

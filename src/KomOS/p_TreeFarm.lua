@@ -1,14 +1,12 @@
 --tree farm Program
 
 --Includes
-os.loadAPI("u_Config")
+local TreeConfig  = require("u_Config")
 
 --Global
 
 --Config
-local TreeConfig = u_Config.ConfigReader()
-
-	if not fs.exists("c_TreeFarm") then
+if not fs.exists("c_TreeFarm") then
 		TreeFile = fs.open("c_TreeFarm", "w")
 		TreeFile.writeLine("Lenght: 5")
 		TreeFile.close()

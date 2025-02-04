@@ -12,16 +12,14 @@ function ShowSetup()
 end
 
 --Includes
-os.loadAPI("u_Area")
-os.loadAPI("u_Config")
+local Area = require("u_Area")
+local FarmConfig = require("u_Config")
 local Inv = require("u_Inv")
 
 --Config
-local Area = u_Area.AreaMapper()
-local AreaX, AreaY = Area.MapAreaPlanar()
+local AreaX, AreaY = Area:MapAreaPlanar()
 print("size: "..tostring(AreaX).."-"..tostring(AreaY))
 
-local FarmConfig = u_Config.ConfigReader()
 if not fs.exists("c_Farm") then
 	FarmFile = fs.open("c_Farm", "w")
 	FarmFile.writeLine("Replant: Seed")
@@ -76,10 +74,6 @@ end
 
 function Farm(Replant)
 	print("Farming")
-	local SeedIndex = FindSeed(Replant)
-	if SeedIndex == -1 then
-		return false
-	end
 	turtle.digDown()
 	turtle.suckDown()
 	Plant(Replant)
@@ -159,7 +153,7 @@ function RunFarm()
 		
 			if TimesMovedY == AreaY then
 				print("Returning to Start pos")
-				if TimesMovedY % 2 == 0 then
+				if TimesMovedY % 2 ~= 0 then
 					turtle.turnLeft()
 				else
 					turtle.turnRight()
@@ -169,7 +163,7 @@ function RunFarm()
 					turtle.forward()
 				end
 				
-				if TimesMovedY % 2 == 0 then
+				if TimesMovedY % 2 ~= 0 then
 					turtle.turnLeft()
 					for i=1, AreaX-1 do
 						turtle.forward()
@@ -212,6 +206,7 @@ function RunFarm()
 		end
 		sleep(200)
 		TimesMovedY = 0
+		Inv:Defrag()
 	end
 end
 

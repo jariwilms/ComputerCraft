@@ -3,7 +3,7 @@
 --Globals
 
 --Class
-AreaMapper = {data = {
+local AreaMapper = {data = {
 		x = 0,
 		y = 0,
 		Z = 0,
@@ -84,3 +84,5 @@ function PrintError (str)
 	term.clear()
 	Print("str")
 end
+
+return AreaMapper
