@@ -33,7 +33,7 @@ function Inventory:GetFirstItem(Item)
         local success, data = turtle.getItemDetail(i)
         if success then
             if string.find(data["name"], Item) then
-                return true, i, data.count
+                return true, i, data["count"]
             end
         end
     end
@@ -48,7 +48,7 @@ function Inventory:GetAllItem(Item)
         if data ~= nil then
             if string.find(data["name"], Item) then
                 ItemSlotsFound = ItemSlotsFound + 1
-                ItemData[ItemSlotsFound] = {slot = i,  count = data.count}
+                ItemData[ItemSlotsFound] = {slot = i,  count = data["count"]}
             end
         end
     end
@@ -89,13 +89,13 @@ function Inventory:Defrag()
             local InvData, Slots = Inventory:GetAllItem(data["name"])
             if Slots > 1 and data["count"] > 0 then
                 for j=1, Slots do
-                    if i == InvData[j].slot then
+                    if i == InvData[j]["slot"] then
                         break
                     end
-                    local SpaceLeft = turtle.getItemSpace(InvData[j].slot)
-                    if SpaceLeft > 0 and InvData.count > 0 and turtle.getItemSpace(InvData[j+1].slot) ~= 0 then
-                        turtle.select(InvData[j].slot)
-                        turtle.transferTo(InvData[j+1].slot, math.min(SpaceLeft,InvData[j+1].count))
+                    local SpaceLeft = turtle.getItemSpace(InvData[j]["slot"])
+                    if SpaceLeft > 0 and InvData["count"] > 0 and turtle.getItemSpace(InvData[j+1]["slot"]) ~= 0 then
+                        turtle.select(InvData[j]["slot"])
+                        turtle.transferTo(InvData[j+1]["slot"], math.min(SpaceLeft,InvData[j+1]["count"]))
                     end
                 end
             end
