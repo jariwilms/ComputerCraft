@@ -14,6 +14,7 @@ end
 --Includes
 os.loadAPI("u_Area")
 os.loadAPI("u_Config")
+local Inv = require("u_Inv")
 
 --Config
 local Area = u_Area.AreaMapper()
@@ -56,7 +57,7 @@ function CheckCrop(Replant, ReadyAge)
 end
 
 function Plant(Replant)
-	local SeedIndex = FindSeed(Replant)
+	local Success, SeedIndex, Data = Inv:GetFirstItem(Replant)
 	if SeedIndex == -1 then
 		return
 	end
@@ -112,7 +113,7 @@ function FindSeed(Replant)
 	return -1
 end
 
-function CanStart()
+function CanStart(Seed)
 	if turtle.getFuelLevel() < 100 then
 		term.setCursorPos(1,1)
 		term.clear()
@@ -120,7 +121,8 @@ function CanStart()
 		return false
 	end
 	
-	if turtle.getItemCount(16) < 1 then
+	local success Inv:GetFirstItem(Seed)
+	if success then
 		term.setCursorPos(1,1)
 		term.clear()
 		print("Need Seeds")
@@ -150,11 +152,7 @@ function RunFarm()
 	local Seed = FarmConfig:getData("Replant")
 	local Age = tonumber(FarmConfig:getData("Age"))
 	
-	print(type(Seed).." "..tostring(Seed))
-	print(type(Age).." "..tostring(Age))
-	sleep(2)
-	
-	while CanStart() do
+	while CanStart(Seed) do
 		print("Start farming")
 		local Farming = true
 		while Farming do

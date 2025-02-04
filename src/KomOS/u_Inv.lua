@@ -121,3 +121,5 @@ function Inventory:Defrag()
     end
     return true
 end
+
+return Inventory
