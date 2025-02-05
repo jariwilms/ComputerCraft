@@ -94,13 +94,9 @@ function move(direction, distance, position, orientation)
 end
 
 function dig(digDirection)
-    local block = turtle.inspect()
-
-    if block then
-        if     digDirection == DigDirection.Front then turtle.dig()
-        elseif digDirection == DigDirection.Up    then turtle.digUp()
-        elseif digDirection == DigDirection.Down  then turtle.digDown()
-        end
+    if     digDirection == DigDirection.Front then turtle.dig()
+    elseif digDirection == DigDirection.Up    then turtle.digUp()
+    elseif digDirection == DigDirection.Down  then turtle.digDown()
     end
 end
 
