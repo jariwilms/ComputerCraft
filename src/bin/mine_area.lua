@@ -39,6 +39,9 @@ local DigDirection =
 }
 
 local function turn(rotation, repetitions, orientation)
+    repetitions = repetitions or 1
+    orientation = orientation or Orientation.Forward
+
     for _ = 1, repetitions do
         if     rotation == Rotation.Left  then
             if turtle.turnLeft() then
@@ -121,6 +124,10 @@ local function mine_area(dimensions)
     local orientation = Orientation.Forward
     local rotation    = Rotation.Right
 
+    if dimensions.x < 0 then rotation = Rotation.Left                             end
+    if dimensions.z < 0 then turn(Rotation.Left, 2); dimensions.x = -dimensions.x end
+    if dimensions.y < 0 then error("Y dimensions < 0 are not yet supported")      end
+    
     turtle.dig()
     turtle.forward()
     
