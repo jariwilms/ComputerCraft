@@ -50,6 +50,7 @@ function turn(rotation, repetitions, orientation)
                 orientation = orientation - 1
                 if orientation == 0 then orientation = Orientation.Right end
             end
+        else   error("Invalid rotation!")
         end
     end
 
@@ -84,6 +85,7 @@ function move(direction, distance, position, orientation)
             if turtle.up()   then position.y = position.y + 1 end
         elseif direction == Direction.Down     then
             if turtle.down() then position.y = position.y - 1 end
+        else   error("Invalid Direction!")
         end
     end
 end
@@ -92,6 +94,7 @@ function dig(digDirection)
     if     digDirection == DigDirection.Front then turtle.dig()
     elseif digDirection == DigDirection.Up    then turtle.digUp()
     elseif digDirection == DigDirection.Down  then turtle.digDown()
+    else                                           error("Invalid DigDirection!")
     end
 end
 
