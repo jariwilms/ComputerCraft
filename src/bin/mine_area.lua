@@ -41,12 +41,10 @@ local DigDirection =
 function turn(rotation, repetitions, orientation)
     for _ = 1, repetitions do
         if     rotation == Rotation.Left  then
-        if     rotation == Rotation.Left  then
             if turtle.turnLeft() then
                 orientation = orientation + 1
                 if orientation == 5 then orientation = Orientation.Forward end
             end
-        elseif rotation == Rotation.Right then
         elseif rotation == Rotation.Right then
             if turtle.turnRight() then
                 orientation = orientation - 1
@@ -143,17 +141,17 @@ function mine_area(dimensions)
 end
 
 function manhattan_distance(dimensions)
-    local endPosition = { x = 0, y = 0, z = 0 }
+    local distance = { x = 0, y = 0, z = 0 }
     
-    if math.fmod(dimensions.x, 2) ~= 0 then endPosition.z = dimensions.z end
-    if math.fmod(dimensions.y, 2) ~= 0 then endPosition.x = dimensions.x end
-                                            endPosition.y = dimensions.y
+    if math.fmod(dimensions.x, 2) ~= 0 then distance.z = dimensions.z end
+    if math.fmod(dimensions.y, 2) ~= 0 then distance.x = dimensions.x end
+                                            distance.y = dimensions.y
 
-    for key, _ in pairs(endPosition) do
-        if endPosition[key] > 0 then endPosition[key] = endPosition[key] - 1 end
+    for key, _ in pairs(distance) do
+        if distance[key] > 0 then distance[key] = distance[key] - 1 end
     end
 
-    return endPosition.x + endPosition.y + endPosition.z
+    return distance.x + distance.y + distance.z
 end
 
 function main()
