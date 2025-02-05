@@ -65,6 +65,8 @@ function move(direction, distance, position, orientation)
                 if orientation == Orientation.Left     then position.x = position.x - 1 end
                 if orientation == Orientation.Backward then position.z = position.z - 1 end
                 if orientation == Orientation.Right    then position.x = position.x + 1 end
+
+                return true
             end
         elseif direction == Direction.Backward then
             if turtle.back() then
@@ -72,28 +74,44 @@ function move(direction, distance, position, orientation)
                 if orientation == Orientation.Left     then position.x = position.x + 1 end
                 if orientation == Orientation.Backward then position.z = position.z + 1 end
                 if orientation == Orientation.Right    then position.x = position.x - 1 end
+                
+                return true
             end
         elseif direction == Direction.Left     then
             orientation = turn(Rotation.Left, 1, orientation)
             move(Direction.Forward, 1, position, orientation)
             orientation = turn(Rotation.Right, 1, orientation)
+            
+            return true
         elseif direction == Direction.Right    then
             orientation = turn(Rotation.Right, 1, orientation)
             move(Direction.Forward, 1, position, orientation)
             orientation = turn(Rotation.Left, 1, orientation)
+            
+            return true
         elseif direction == Direction.Up       then
-            if turtle.up()   then position.y = position.y + 1 end
+            if turtle.up()   then 
+                position.y = position.y + 1
+                
+                return true
+            end
         elseif direction == Direction.Down     then
-            if turtle.down() then position.y = position.y - 1 end
+            if turtle.down() then 
+                position.y = position.y - 1 
+
+                return true
+            end
         else   error("Invalid Direction!")
         end
     end
+
+    return false
 end
 
 function dig(digDirection)
-    if     digDirection == DigDirection.Front then turtle.dig()
-    elseif digDirection == DigDirection.Up    then turtle.digUp()
-    elseif digDirection == DigDirection.Down  then turtle.digDown()
+    if     digDirection == DigDirection.Front then return turtle.dig()
+    elseif digDirection == DigDirection.Up    then return turtle.digUp()
+    elseif digDirection == DigDirection.Down  then return turtle.digDown()
     else                                           error("Invalid DigDirection!")
     end
 end
@@ -109,8 +127,9 @@ function mine_area(dimensions)
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
             for _ = 1, dimensions.z - 1 do
-                dig(DigDirection.Front)
-                move(Direction.Forward, 1, position, orientation)
+                if dig(DigDirection.Front) then move(Direction.Forward, 1, position, orientation)
+                else                            error("Failed to dig!")
+                end
             end
         
             if _ < dimensions.x then
