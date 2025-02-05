@@ -38,7 +38,7 @@ local DigDirection =
     Down  = 3, 
 }
 
-function turn(rotation, repetitions, orientation)
+local function turn(rotation, repetitions, orientation)
     for _ = 1, repetitions do
         if     rotation == Rotation.Left  then
             if turtle.turnLeft() then
@@ -57,7 +57,7 @@ function turn(rotation, repetitions, orientation)
     return orientation
 end
 
-function move(direction, distance, position, orientation)
+local function move(direction, distance, position, orientation)
     for _ = 1, distance do
         if     direction == Direction.Forward  then
             if turtle.forward() then
@@ -108,7 +108,7 @@ function move(direction, distance, position, orientation)
     return false
 end
 
-function dig(digDirection)
+local function dig(digDirection)
     if     digDirection == DigDirection.Front then return turtle.dig()
     elseif digDirection == DigDirection.Up    then return turtle.digUp()
     elseif digDirection == DigDirection.Down  then return turtle.digDown()
@@ -116,7 +116,7 @@ function dig(digDirection)
     end
 end
 
-function mine_area(dimensions)
+local function mine_area(dimensions)
     local position    = { x = 0, y = 0, z = 0 }
     local orientation = Orientation.Forward
     local rotation    = Rotation.Right
@@ -155,7 +155,7 @@ function mine_area(dimensions)
     io.write("Excavation complete!\n")
 end
 
-function manhattan_distance(dimensions)
+local function manhattan_distance(dimensions)
     local distance = { x = 0, y = 0, z = 0 }
     
     if math.fmod(dimensions.x, 2) ~= 0 then distance.z = dimensions.z end
@@ -169,7 +169,7 @@ function manhattan_distance(dimensions)
     return distance.x + distance.y + distance.z
 end
 
-function main()
+local function main()
     term.clear()
     term.setCursorPos(1, 1)
 

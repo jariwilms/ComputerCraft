@@ -1,4 +1,4 @@
-function main()
+local function main()
     local directories = 
     {
         "/bin", 
