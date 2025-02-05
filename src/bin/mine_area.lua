@@ -126,7 +126,12 @@ local function mine_area(dimensions)
     
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
-            if _ > 1 then
+            for _ = 1, dimensions.z - 1 do
+                dig(DigDirection.Front)
+                move(Direction.Forward, 1, position, orientation)
+            end
+
+            if _ < dimensions.x then
                 orientation = turn(rotation, 1, orientation)
                 dig(DigDirection.Front)
                 move(Direction.Forward, 1, position, orientation)
@@ -135,11 +140,6 @@ local function mine_area(dimensions)
                 if     rotation == Rotation.Left  then rotation = Rotation.Right
                 elseif rotation == Rotation.Right then rotation = Rotation.Left
                 end
-            end
-
-            for _ = 1, dimensions.z - 1 do
-                dig(DigDirection.Front)
-                move(Direction.Forward, 1, position, orientation)
             end
         end
     
