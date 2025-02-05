@@ -100,9 +100,9 @@ function dig(digDirection)
 		if     digDirection == DigDirection.Front then
 			turtle.dig()
 		elseif digDirection == DigDirection.Up    then
-			turtle.digDown()
-		elseif digDirection == DigDirection.Down  then
 			turtle.digUp()
+		elseif digDirection == DigDirection.Down  then
+			turtle.digDown()
 		end
 	end
 end
@@ -172,25 +172,29 @@ function main()
 	term.clear()
 	term.setCursorPos(1, 1)
 
+	io.write("Starting Turtle\n")
+
 	local dimensions      = { x = 0, y = 0, z = 0 }
 	local dimensionString = { "X", "Y", "Z" }
     local volume          = dimensions.x * dimensions.y * dimensions.z
 	local reply           = ""
-	local index           = 1
 
 	if argc == 3 then
+		local index = 1
+
 		for key, _ in pairs(dimensions) do
 			dimensions[key] = tonumber(argv[index]) or 0
 			index = index + 1
 		end
 	elseif argc == 0 then
 		while true do
-			term.clear()
-			term.setCursorPos(1, 1)
+			local index = 1
 
 			for key, _ in pairs(dimensions) do
 				io.write("Enter " .. dimensionString[index] .. " coordinate: ")
-				reply = io.read("*n")
+				index = index + 1
+				
+				reply = read()
 				if reply == nil or #reply == 0 then break end
 
 				dimensions[key] = math.floor(reply)
@@ -199,13 +203,13 @@ function main()
 			io.write("Is the turtle on a chest? [y/N] ")
 			reply = string.lower(read())
 			
-			if reply == "y" then
-				config.OnChest = true
-			elseif reply == "n" or #reply == 0 then
+			if #reply == 0 or reply == "n" then
 				config.OnChest = false
 			else
-				io.write("Invalid argument!\n")
+				config.OnChest = true
 			end
+
+
 
 			io.write("Dimensions: <", dimensions.x, ', ', dimensions.y, ', ', dimensions.z, ">\n")
 			io.write("OnChest:    ",  tostring(config.OnChest), "\n")
@@ -213,12 +217,12 @@ function main()
 
 			io.write("Is this correct? [Y/n] ")
 			reply = string.lower(read())
-			term.clear()
 
-			if reply == "y" then
+			if #reply == 0 or reply == "y" then
 				break
-			elseif reply ~= "n" and #reply ~= 0 then
-				io.write("Invalid argument!\n")
+			else
+				term.clear()
+				term.setCursorPos(1, 1)
 			end
 		end
 	else
@@ -243,7 +247,8 @@ function main()
         end
 	end
 
-
+	term.clear()
+	term.setCursorPos(1, 1)
 
 	io.write("Beginning excavation\n")
     io.write("Mining " .. volume .. " blocks\n")
