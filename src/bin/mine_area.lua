@@ -81,13 +81,9 @@ function move(direction, distance, position, orientation)
             move(Direction.Forward, 1, position, orientation)
             orientation = turn(Rotation.Left, 1, orientation)
         elseif direction == Direction.Up       then
-            if turtle.up() then
-                position.y = position.y + 1
-            end
+            if turtle.up()   then position.y = position.y + 1 end
         elseif direction == Direction.Down     then
-            if turtle.down() then
-                position.y = position.y - 1
-            end
+            if turtle.down() then position.y = position.y - 1 end
         end
     end
 end
@@ -176,24 +172,19 @@ function main()
 
             for key, _ in pairs(dimensions) do
                 io.write("Enter " .. dimensionString[index] .. " coordinate: ")
-                index = index + 1
                 
                 reply = read()
-                if reply == nil or #reply == 0 then 
-                    io.write("Invalid input\n")
-                    break 
-                end
-
+                if reply == nil or #reply == 0 then io.write("Invalid input\n") break end
+                
                 dimensions[key] = math.floor(reply)
+                index = index + 1
             end
 
             io.write("Is the turtle on a chest? [y/N] ")
             reply = string.lower(read())
             
-            if #reply == 0 or reply == "n" then
-                config.OnChest = false
-            else
-                config.OnChest = true
+            if #reply == 0 or reply == "n" then config.OnChest = false
+            else                                config.OnChest = true
             end
 
             io.write("Dimensions: <", dimensions.x, ', ', dimensions.y, ', ', dimensions.z, ">\n")
