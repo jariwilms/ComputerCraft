@@ -41,10 +41,12 @@ local DigDirection =
 function turn(rotation, repetitions, orientation)
     for _ = 1, repetitions do
         if     rotation == Rotation.Left  then
+        if     rotation == Rotation.Left  then
             if turtle.turnLeft() then
                 orientation = orientation + 1
                 if orientation == 5 then orientation = Orientation.Forward end
             end
+        elseif rotation == Rotation.Right then
         elseif rotation == Rotation.Right then
             if turtle.turnRight() then
                 orientation = orientation - 1
@@ -120,6 +122,9 @@ function mine_area(dimensions)
                 move(Direction.Forward, 1, position, orientation)
                 orientation = turn(rotation, 1, orientation)
 
+                if     rotation == Rotation.Left  then rotation = Rotation.Right
+                elseif rotation == Rotation.Right then rotation = Rotation.Left
+                end
                 if     rotation == Rotation.Left  then rotation = Rotation.Right
                 elseif rotation == Rotation.Right then rotation = Rotation.Left
                 end
