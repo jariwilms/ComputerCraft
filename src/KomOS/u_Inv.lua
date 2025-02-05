@@ -15,6 +15,23 @@ end
 setmetatable (Inventory, {__call=Inventory.__init__})
 
 --functions
+function Inventory:GetInvSlot(idx, InvData)
+    local data = turtle.getItemDetail(idx)
+    if data ~= nil then
+        table.insert(InvData, data)
+    end
+end
+
+function Inventory:GetInvParallel()
+    local Funcs = {}
+    local InvData = {}
+    for i=1, 16 do
+        table.insert(Funcs, function() Inventory:GetInvSlot(i,InvData) end)
+    end
+    parallel.waitForAll(table.unpack(Funcs))
+    --print(textutils.serialise(InvData))
+end
+
 function Inventory:GetInv()
     InvData = {}
     for i=1, 16 do
@@ -25,6 +42,7 @@ function Inventory:GetInv()
             InvData[i] = {name = data["name"], count = data["count"]}
         end
 	end
+    --print(textutils.serialise(InvData))
     return InvData
 end
 
@@ -93,7 +111,7 @@ function Inventory:DropAllOfItem(Item)
 end
 
 function Inventory:Defrag()
-    for i=1, 15 do
+    for i=1, 16 do
         local data = turtle.getItemDetail(i)
         if data ~= nil then
             print(data["name"].. " Found")
