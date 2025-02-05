@@ -124,12 +124,20 @@ local function mine_area(dimensions)
     local orientation = Orientation.Forward
     local rotation    = Rotation.Right
 
-    if dimensions.x < 0 then rotation = Rotation.Left                             end
-    if dimensions.z < 0 then turn(Rotation.Left, 2); dimensions.x = -dimensions.x end
-    if dimensions.y < 0 then error("Y dimensions < 0 are not yet supported")      end
+
     
+    if dimensions.z < 0 then turn(Rotation.Left, 2); dimensions.x = -dimensions.x end
+    if dimensions.x < 0 then rotation = Rotation.Left                             end
+    if dimensions.y < 0 then error("Y dimensions < 0 are not yet supported")      end
+
+    dimensions.x = math.abs(dimensions.x)
+    dimensions.y = math.abs(dimensions.y)
+    dimensions.z = math.abs(dimensions.z)
+
     turtle.dig()
     turtle.forward()
+    
+
     
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
