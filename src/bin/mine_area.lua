@@ -97,12 +97,9 @@ function dig(digDirection)
     local block = turtle.inspect()
 
     if block then
-        if     digDirection == DigDirection.Front then
-            turtle.dig()
-        elseif digDirection == DigDirection.Up    then
-            turtle.digUp()
-        elseif digDirection == DigDirection.Down  then
-            turtle.digDown()
+        if     digDirection == DigDirection.Front then turtle.dig()
+        elseif digDirection == DigDirection.Up    then turtle.digUp()
+        elseif digDirection == DigDirection.Down  then turtle.digDown()
         end
     end
 end
@@ -176,20 +173,21 @@ function main()
 
     io.write("Starting Turtle\n")
 
+
+
     local dimensions      = { x = 0, y = 0, z = 0 }
-    local dimensionString = { "X", "Y", "Z" }
-    local volume          = dimensions.x * dimensions.y * dimensions.z
-    local reply           = ""
+    local dimensionString = { "x", "y", "z" }
 
     if argc == 3 then
         local index = 1
 
         for key, _ in pairs(dimensions) do
-            dimensions[key] = tonumber(argv[index]) or 0
+            dimensions[key] = tonumber(argv[index]) or error("Could not convert argument '" .. argv[index] .. "' to number")
             index = index + 1
         end
     elseif argc == 0 then
         while true do
+            local reply = ""
             local index = 1
 
             for key, _ in pairs(dimensions) do
@@ -197,7 +195,10 @@ function main()
                 index = index + 1
                 
                 reply = read()
-                if reply == nil or #reply == 0 then break end
+                if reply == nil or #reply == 0 then 
+                    io.write("Invalid input\n")
+                    break 
+                end
 
                 dimensions[key] = math.floor(reply)
             end
@@ -247,11 +248,13 @@ function main()
         end
     end
 
+
+
     term.clear()
     term.setCursorPos(1, 1)
 
     io.write("Beginning excavation\n")
-    io.write("Mining " .. volume .. " blocks\n")
+    io.write("Mining " .. dimensions.x * dimensions.y * dimensions.z .. " blocks\n")
 
     mine_area(dimensions)
 end
