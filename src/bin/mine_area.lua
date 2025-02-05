@@ -40,13 +40,12 @@ local DigDirection =
 
 function turn(rotation, repetitions, orientation)
     for _ = 1, repetitions do
-        if rotation == Rotation.Left then
+        if     rotation == Rotation.Left  then
             if turtle.turnLeft() then
                 orientation = orientation + 1
                 if orientation == 5 then orientation = Orientation.Forward end
             end
-        end
-        if rotation == Rotation.Right then
+        elseif rotation == Rotation.Right then
             if turtle.turnRight() then
                 orientation = orientation - 1
                 if orientation == 0 then orientation = Orientation.Right end
@@ -120,10 +119,10 @@ function mine_area(dimensions)
                 dig(DigDirection.Front)
                 move(Direction.Forward, 1, position, orientation)
                 orientation = turn(rotation, 1, orientation)
-            end
 
-            if     rotation == Rotation.Left  then rotation = Rotation.Right
-            elseif rotation == Rotation.Right then rotation = Rotation.Left
+                if     rotation == Rotation.Left  then rotation = Rotation.Right
+                elseif rotation == Rotation.Right then rotation = Rotation.Left
+                end
             end
         end
     
@@ -136,31 +135,6 @@ function mine_area(dimensions)
     end
 
     io.write("Excavation complete!\n")
-end
-
-function calculate_distance(dimensions)
-    local endPosition = { x = 0, y = 0, z = 0 }
-    
-    if math.fmod(dimensions.x, 2) ~= 0 then endPosition.z = dimensions.z end
-    if math.fmod(dimensions.y, 2) ~= 0 then endPosition.x = dimensions.x end
-                                            endPosition.y = dimensions.y
-
-      for key, _ in pairs(endPosition) do
-        if endPosition[key] > 0 then endPosition[key] = endPosition[key] - 1 end
-      end
-
-    return endPosition.x + endPosition.y + endPosition.z
-end
-
-function validate_inventory()
-    local firstSlot  = turtle.getItemDetail(1)
-    local secondSlot = turtle.getItemDetail(2)
-
-    if not firstSlot  then error() end
-    if not secondSlot then error() end
-
-    if firstSlot.name ~= "coal" then end
-    if firstSlot.name ~= "redstone_torch" then end
 end
 
 function main()
