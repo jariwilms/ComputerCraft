@@ -168,62 +168,56 @@ local function manhattan_distance(dimensions)
     return distance.x + distance.y + distance.z
 end
 
+local function validate_confirmation(response, pass, fail, default)
+    response = string.lower(response)
+    pass     = string.lower(pass)
+    fail     = string.lower(fail)
+
+    if #response == 0    then return default end
+    if response  == pass then return true    end
+    if response  == fail then return false   end
+
+    return false
+end
+
 local function main()
     term.clear()
     term.setCursorPos(1, 1)
-
-    io.write("Starting Turtle\n")
+    
+    io.write("--Mine Area--\n")
 
 
 
     local dimensions      = { x = 0, y = 0, z = 0 }
-    local dimensionString = { "x", "y", "z" }
 
-    if argc == 3 then
-        local index = 1
-
-        for key, _ in pairs(dimensions) do
-            dimensions[key] = tonumber(argv[index]) or error("Could not convert argument '" .. argv[index] .. "' to number")
-            index = index + 1
-        end
+    if     argc == 3 then
+        dimensions.x = math.floor(argv[1]) or error("Invalid input!")
+        dimensions.y = math.floor(argv[2]) or error("Invalid input!")
+        dimensions.z = math.floor(argv[3]) or error("Invalid input!")
     elseif argc == 0 then
         while true do
-            local reply = ""
-            local index = 1
+            io.write("Enter x coordinate: ")
+            dimensions.x = math.floor(read())
 
-            for key, _ in pairs(dimensions) do
-                io.write("Enter " .. dimensionString[index] .. " coordinate: ")
-                
-                reply = read()
-                if reply == nil or #reply == 0 then io.write("Invalid input\n") break end
-                
-                dimensions[key] = math.floor(reply)
-                index = index + 1
-            end
+            io.write("Enter y coordinate: ")
+            dimensions.y = math.floor(read())
+
+            io.write("Enter z coordinate: ")
+            dimensions.z = math.floor(read())
 
             io.write("Is the turtle on a chest? [y/N] ")
-            reply = string.lower(read())
-            
-            if #reply == 0 or reply == "n" then config.OnChest = false
-            else                                config.OnChest = true
-            end
+            config.OnChest = validate_confirmation(read(), "y", "n", false)
 
             io.write("Dimensions: <", dimensions.x, ', ', dimensions.y, ', ', dimensions.z, ">\n")
             io.write("OnChest:    ",  tostring(config.OnChest), "\n")
             io.write("\n")
 
             io.write("Is this correct? [Y/n] ")
-            reply = string.lower(read())
-
-            if #reply == 0 or reply == "y" then
-                break
-            else
-                term.clear()
-                term.setCursorPos(1, 1)
+            if validate_confirmation(read(), "y", "n", true) then break
+            else                                                  term.clear(); term.setCursorPos(1, 1)
             end
         end
-    else
-        error("Invalid number of arguments!\nExpected: 3, Received: ", argc)
+    else   error("Invalid number of arguments!\nExpected: 3, Received: ", argc)
     end
 
 
