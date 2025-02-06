@@ -32,7 +32,6 @@ function InstallReq (name, Link)
 	end
 	shell.run("wget", Link, name)
 	print("\n")
-	sleep(0.8)
 end
 
 function SetupStartup()
@@ -74,6 +73,27 @@ function InstallAllReq()
 	SetupStartup()
 end
 
+function InstallAllReqParallel()
+	local Funcs = {}
+    --Install utils
+	table.insert(Funcs, function() InstallReq("u_Sprite", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Sprite.lua?v=1") end)
+	table.insert(Funcs, function() InstallReq("u_Config", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Config.lua?v=1") end)
+	table.insert(Funcs, function() InstallReq("u_Area", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Area.lua?v=1") end)
+	table.insert(Funcs, function() InstallReq("u_Inv", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Inv.lua?v=1") end)
+
+	--OS
+	table.insert(Funcs, function() InstallReq("KomOS", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/KomOS.lua?v=1") end)
+
+	--programs
+	table.insert(Funcs, function() InstallReq("p_Refuel", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_Refuel.lua?v=1") end)
+
+	--Debug
+	table.insert(Funcs, function() InstallReq("Debug_Test", "https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/src/KomOS/Debug_Test.lua?v=1") end)
+	parallel.waitForAll(table.unpack(Funcs))
+	--Create startup
+	SetupStartup()
+end
+
 --Start
 term.setCursorPos(1, 1)
 term.clear()
@@ -86,7 +106,8 @@ end
 
 --Instal requireds (update system)
 if OptionOnly == false then
-	InstallAllReq()
+	--InstallAllReq()
+	InstallAllReqParallel()
 end
 
 --Instal optionals (setup system)
