@@ -1,14 +1,20 @@
 local urls =
 {
-    repository = [[https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/]], 
-    
-    required = 
+    repository = [[https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/]],
+
+    required =
     {
-        { url = "src/bin/mine_area.lua", path = "bin/mine_area", config = { url = "src/cfg/mine_area.lua", path = "cfg/mine_area" } }, 
-    }, 
-    optional = 
+        {
+            url = "src/bin/mine_area.lua", path = "bin/mine_area",
+            dependencies =
+            {
+                { url = "src/cfg/mine_area.lua", path = "cfg/mine_area" },
+            },
+        },
+    },
+    optional =
     {
-        --{ url = "", path = "", config = {} }, 
+        --{ url = "", path = "", config = {} },
     }
 }
 
