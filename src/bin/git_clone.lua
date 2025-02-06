@@ -29,8 +29,10 @@ local function install(base, data, force)
 	if fs.exists(path) and force then fs.delete(path) end
 	shell.run("wget", url, path)
 
-	for index, _ in ipairs(dependencies) do
-		install(base, dependencies[index], force)
+	if dependencies then
+		for _, value in ipairs(dependencies) do
+			install(base, value, force)
+		end
 	end
 end
 
