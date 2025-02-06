@@ -41,9 +41,9 @@ local function main()
 	term.setCursorPos(1, 1)
 
 	local flags      = parse_flags(argv)
-	local repository = config.repository
 	local force      = flags["f"]
 	local optional   = flags["o"]
+	local repository = config.repository
 
 	for _, value in ipairs(config.required) do
 		io.write("Installing default programs\n")
