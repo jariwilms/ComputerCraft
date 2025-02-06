@@ -1,41 +1,62 @@
 local config = require("/cfg/mine_area")
 
+math.volume = function (dimensions)
+    local volume = 1
+
+    for key, _ in pairs(dimensions) do
+        volume = volume * math.abs(dimensions[key])
+    end
+
+    return volume
+end
+math.manhattan_distance = function(dimensions)
+    local distance = 0
+
+    for key, _ in pairs(dimensions) do
+        distance = distance + math.abs(dimensions[key])
+    end
+
+    return distance
+end
+
+
+
 local argv = {...}
 local argc = #argv
 
-local Direction = 
+local Direction =
 {
     Forward  = 1,
-    Backward = 2, 
-    Left     = 3, 
-    Right    = 4, 
-    Up       = 5, 
-    Down     = 6, 
+    Backward = 2,
+    Left     = 3,
+    Right    = 4,
+    Up       = 5,
+    Down     = 6,
 }
-local Orientation = 
+local Orientation =
 {
     Forward  = 1,
-    Left     = 2, 
-    Backward = 3, 
-    Right    = 4, 
+    Left     = 2,
+    Backward = 3,
+    Right    = 4,
 }
-local Rotation = 
+local Rotation =
 {
-    Left  = 1, 
-    Right = 2, 
+    Left  = 1,
+    Right = 2,
 }
-local Cardinal = 
+local Cardinal =
 {
-    North = 1, 
-    East  = 2, 
-    South = 3, 
-    West  = 4, 
+    North = 1,
+    East  = 2,
+    South = 3,
+    West  = 4,
 }
-local DigDirection = 
+local DigDirection =
 {
-    Front = 1, 
-    Up    = 2, 
-    Down  = 3, 
+    Front = 1,
+    Up    = 2,
+    Down  = 3,
 }
 
 local function turn(rotation, repetitions, orientation)
@@ -53,7 +74,7 @@ local function turn(rotation, repetitions, orientation)
                 orientation = orientation - 1
                 if orientation == 0 then orientation = Orientation.Right end
             end
-        else   error("Invalid rotation!")
+        else   error("Invalid Rotation!")
         end
     end
 
@@ -77,30 +98,30 @@ local function move(direction, distance, position, orientation)
                 if orientation == Orientation.Left     then position.x = position.x + 1 end
                 if orientation == Orientation.Backward then position.z = position.z + 1 end
                 if orientation == Orientation.Right    then position.x = position.x - 1 end
-                
+
                 return true
             end
         elseif direction == Direction.Left     then
             orientation = turn(Rotation.Left, 1, orientation)
             move(Direction.Forward, 1, position, orientation)
             orientation = turn(Rotation.Right, 1, orientation)
-            
+
             return true
         elseif direction == Direction.Right    then
             orientation = turn(Rotation.Right, 1, orientation)
             move(Direction.Forward, 1, position, orientation)
             orientation = turn(Rotation.Left, 1, orientation)
-            
+
             return true
         elseif direction == Direction.Up       then
-            if turtle.up()   then 
+            if turtle.up()   then
                 position.y = position.y + 1
-                
+
                 return true
             end
         elseif direction == Direction.Down     then
-            if turtle.down() then 
-                position.y = position.y - 1 
+            if turtle.down() then
+                position.y = position.y - 1
 
                 return true
             end
@@ -115,7 +136,7 @@ local function dig(digDirection)
     if     digDirection == DigDirection.Front then return turtle.dig()
     elseif digDirection == DigDirection.Up    then return turtle.digUp()
     elseif digDirection == DigDirection.Down  then return turtle.digDown()
-    else                                           error("Invalid DigDirection!")
+    else   error("Invalid DigDirection!")
     end
 end
 
@@ -125,7 +146,7 @@ local function mine_area(dimensions)
     local rotation    = Rotation.Right
 
 
-    
+
     if dimensions.z < 0 then turn(Rotation.Left, 2); dimensions.x = -dimensions.x end
     if dimensions.x < 0 then rotation = Rotation.Left                             end
     if dimensions.y < 0 then error("Y dimensions < 0 are not yet supported")      end
@@ -136,9 +157,9 @@ local function mine_area(dimensions)
 
     turtle.dig()
     turtle.forward()
-    
 
-    
+
+
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
             for _ = 1, dimensions.z - 1 do
@@ -157,7 +178,7 @@ local function mine_area(dimensions)
                 end
             end
         end
-    
+
         if _ < dimensions.y then
             dig(DigDirection.Up)
             move(Direction.Up, 1, position, orientation)
@@ -165,32 +186,14 @@ local function mine_area(dimensions)
             orientation = turn(Rotation.Left, 1, orientation)
         end
     end
-
-    io.write("Excavation complete!\n")
-end
-
-local function manhattan_distance(dimensions)
-    local distance = { x = 0, y = 0, z = 0 }
-    
-    if math.fmod(dimensions.x, 2) ~= 0 then distance.z = dimensions.z end
-    if math.fmod(dimensions.y, 2) ~= 0 then distance.x = dimensions.x end
-                                            distance.y = dimensions.y
-
-    for key, _ in pairs(distance) do
-        if distance[key] > 0 then distance[key] = distance[key] - 1 end
-    end
-
-    return distance.x + distance.y + distance.z
 end
 
 local function validate_confirmation(response, pass, fail, default)
-    response = string.lower(response)
-    pass     = string.lower(pass)
-    fail     = string.lower(fail)
+    local response = string.lower(response)
 
-    if #response == 0    then return default end
-    if response  == pass then return true    end
-    if response  == fail then return false   end
+    if  response == string.lower(pass) then return true    end
+    if  response == string.lower(fail) then return false   end
+    if #response == 0                  then return default end
 
     return false
 end
@@ -198,7 +201,7 @@ end
 local function main()
     term.clear()
     term.setCursorPos(1, 1)
-    
+
     io.write("--Mine Area--\n")
 
 
@@ -237,17 +240,16 @@ local function main()
 
 
 
-    local fuelLevel = turtle.getFuelLevel()
-    local distance  = manhattan_distance(dimensions)
+    local distance     = math.volume(dimensions) + math.manhattan_distance(dimensions) --worst case distance
+    local fuelLevel    = turtle.getFuelLevel()
+    local requiredFuel = distance - fuelLevel
 
-    if fuelLevel < distance then
+    if requiredFuel > 0 then
         io.write("Fuel level inadequate, refueling...\n")
 
         turtle.select(1)
-        if turtle.refuel(0) then 
-            if not turtle.refuel(distance - fuelLevel) then error("Not enough fuel") end
-        else 
-            error("Invalid fuel source!")
+        if turtle.refuel(0) and not turtle.refuel(requiredFuel) then error("Not enough fuel")
+        else error("Invalid fuel source!")
         end
     end
 
@@ -257,9 +259,11 @@ local function main()
     term.setCursorPos(1, 1)
 
     io.write("Beginning excavation\n")
-    io.write("Mining " .. dimensions.x * dimensions.y * dimensions.z .. " blocks\n")
+    io.write("Mining " .. math.volume(dimensions) .. " blocks\n")
 
     mine_area(dimensions)
+
+    io.write("Excavation complete!\n")
 end
 
 main()
