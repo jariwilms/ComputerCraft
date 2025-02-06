@@ -412,8 +412,8 @@ function Agent:DrawBorder()
 
 		term.setCursorPos(12,1)
 		term.blit(RunningExec
-		,string.rep("f", RunningExec#)
-		,string.rep("6", RunningExec#))
+		,string.rep("f", #RunningExec)
+		,string.rep("6", #RunningExec))
 
 		term.setCursorPos(34,1)
 		str = textutils.formatTime(os.time(),true)
