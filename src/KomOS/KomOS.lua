@@ -362,12 +362,12 @@ end
 function Agent:UpdateKey()
 	while true do
 		event,key = os.pullEvent("key")
-		if key == keys.up then
+		if key == keys.up or key == keys.w then
 			if Selected > SelectableX then
 				Selected = Selected - SelectableX
 			end
 		end
-		if key == keys.down then
+		if key == keys.down or key == keys.s then
 			if Selected <= MaxSelectable - (SelectableX - math.fmod(MaxSelectable,SelectableX)) then
 				local tempSelected = Selected + SelectableX
 				if tempSelected <= MaxSelectable then 
@@ -375,19 +375,19 @@ function Agent:UpdateKey()
 				end
 			end
 		end
-		if key == keys.left then
+		if key == keys.left or key == keys.a then
 			local tempSelected = Selected - 1
 			if tempSelected > 0 then
 				Selected = tempSelected
 			end
 		end
-		if key == keys.right then
+		if key == keys.right or key == keys.d then
 			local tempSelected = Selected + 1
 			if tempSelected <= MaxSelectable then
 				Selected = tempSelected
 			end
 		end
-		if key == keys.enter then
+		if key == keys.enter or key == keys.space then
 			self:OnEnter()
 		end
 		if key == keys.backspace or key == keys.e then
@@ -403,28 +403,33 @@ end
 --Core
 
 function Agent:DrawBorder()
-	term.setCursorPos(1,1)
-	
-	term.blit("KomOS Agent                            "
-	,"fffffffffffffffffffffffffffffffffffffff"
-	,"000000000000000000000000000000000000000")
-	
-	term.setCursorPos(34,1)
-	str = textutils.formatTime(os.time(),true)
-	curX = 34
-	for i = 1, #str do
-		term.setCursorPos(curX,1)
-        term.blit(string.sub(str, i, i), "f", "0")
-		curX = curX+1
-    end
-	
+	while true do
+		term.setCursorPos(1,1)
+		
+		term.blit("KomOS Agent                            "
+		,"fffffffffffffffffffffffffffffffffffffff"
+		,"000000000000000000000000000000000000000")
+
+		term.setCursorPos(12,1)
+		term.blit(RunningExec
+		,string.rep("f", RunningExec#)
+		,string.rep("6", RunningExec#))
+
+		term.setCursorPos(34,1)
+		str = textutils.formatTime(os.time(),true)
+		curX = 34
+		for i = 1, #str do
+			term.setCursorPos(curX,1)
+			term.blit(string.sub(str, i, i), "f", "0")
+			curX = curX+1
+		end
+	end
 end
 
 function Agent:DrawWindow()
 	while exit == false do
 		if Run then
 			term.clear()
-			self:DrawBorder()
 			if Window == 1 then
 				self:MainMenu()
 			elseif Window == 2 then
@@ -526,7 +531,12 @@ function Network()
 	agent:HandleNetwork()
 end
 
-parallel.waitForAny(Loop, Keys, Network)
+function OsHeading()
+	agent:DrawBorder()
+end
+
+parallel.waitForAny(Loop, Keys, Network, OsHeading)
 term.clear()
-term.setCursorPos(1,1)
-print("KomOS shutdown")
+term.setCursorPos(1,2)
+textutils.slowPrint("KomOS shutdown...",0.1)
+term.clear()
