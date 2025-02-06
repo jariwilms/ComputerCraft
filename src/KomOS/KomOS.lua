@@ -307,7 +307,7 @@ end
 function Agent:ProgramOnEnter()
 	Run = false
 	term.clear()
-	term.setCursorPos(1,1)
+	term.setCursorPos(1,2)
 	RunningExec = CurrentExec
 	shell.run(RunningExec)
 	print("<Press any key to return to OS>")
@@ -319,7 +319,7 @@ end
 function Agent:ConfigOnEnter()
 	Run = false
 	term.clear()
-	term.setCursorPos(1,1)
+	term.setCursorPos(1,2)
 	RunningExec = CurrentExec
 	shell.run("edit",RunningExec)
 	print("<Press any key to return to OS>")
