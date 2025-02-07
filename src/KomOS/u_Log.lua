@@ -16,7 +16,8 @@
 local Logger = {Logfile = "log", nilfile = "nil"}
 
 function Logger.Init(Logfile,nilfile,ClearFiles)
-    Logger = {Logfile,nilfile}  
+    Logger.Logfile = Logfile
+    Logger.nilfile = nilfile
     if ClearFiles then
         Logger.ClearLog()
         Logger.ClearNil()
@@ -25,19 +26,19 @@ end
 
 function Logger.Log(Text)
     io.output(io.open(Logger.Logfile,"a"))
-    io.write("\n["..textutils.formatTime(os.time(),true).."][Log]"..Text)
+    io.write("\n["..textutils.formatTime(os.time(),true).."][Log] "..Text)
     io.flush()
 end
 
 function Logger.LogWarning(Text)
     io.output(io.open(Logger.Logfile,"a"))
-    io.write("\n["..textutils.formatTime(os.time(),true).."][Warning]"..Text)
+    io.write("\n["..textutils.formatTime(os.time(),true).."][Warning] "..Text)
     io.flush()
 end
 
 function Logger.LogError(Text)
     io.output(io.open(Logger.Logfile,"a"))
-    io.write("\n["..textutils.formatTime(os.time(),true).."][Error]"..Text)
+    io.write("\n["..textutils.formatTime(os.time(),true).."][Error] "..Text)
     io.flush()
 end
 
@@ -54,56 +55,54 @@ end
 function Logger.TermLog(Text)
     local date = textutils.formatTime(os.time(),true)
     local type = "Log"
-    term.write("\n[")
+    term.write("[")
     term.blit(date, string.rep("0", #date), string.rep("f", #date))
     term.write("]")
     term.write("[")
     term.blit(type, string.rep("0", #type), string.rep("f", #type))
     term.write("] ")
     term.blit(Text, string.rep("0", #Text), string.rep("f", #Text))
+    print("")
 end
 
 function Logger.TermWarn(Text)
     local date = textutils.formatTime(os.time(),true)
     local type = "Warning"
-    term.write("\n[")
+    term.write("[")
     term.blit(date, string.rep("0", #date), string.rep("f", #date))
     term.write("]")
     term.write("[")
     term.blit(type, string.rep("4", #type), string.rep("f", #type))
     term.write("] ")
     term.blit(Text, string.rep("0", #Text), string.rep("f", #Text))
+    print("")
 end
 
 function Logger.TermError(Text)
     local date = textutils.formatTime(os.time(),true)
     local type = "Error"
-    term.write("\n[")
+    term.write("[")   
     term.blit(date, string.rep("0", #date), string.rep("f", #date))
     term.write("]")
     term.write("[")
     term.blit(type, string.rep("e", #type), string.rep("f", #type))
     term.write("] ")
     term.blit(Text, string.rep("0", #Text), string.rep("f", #Text))
+    print("")
 end
 
 function Logger.ClearTerm(Text)
-    term.clear()
+    term.clear()    
 end
 
-function Logger.RedirectLog(Func, ...)
-    io.output(io.open(Logger.Logfile,"a"))
-    io.write("\n")
-	local result = func(...)
-	io.flush()
-    return result
-end
-
-function Logger.RedirectNil(Func, ...)
-    io.output(io.open(Logger.Logfile,"a"))
-    io.write("\n")
-	local result = func(...)
-	io.flush()
+function Logger.Redirect(Func, ...)
+    local default = term.current()
+    local x,y = term.getCursorPos()
+    local newWindow = window.create(term.current(), 60, 60, 1, 1)
+    term.redirect(newWindow)
+	local result = Func(...)
+	term.redirect(default)
+    term.setCursorPos(x,y)
     return result
 end
 
