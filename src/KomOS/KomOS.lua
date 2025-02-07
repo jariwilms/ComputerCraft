@@ -9,8 +9,8 @@ local Sprite = require("u_Sprite")
 Selected = 1
 SelectableX = 3
 MaxSelectable = 6
-CurrentExec = "None"
-RunningExec = "None"
+CurrentExec = "Agent OS"
+RunningExec = "Agent OS"
 Run = true
 Pause = false
 exit = false
@@ -307,24 +307,24 @@ end
 function Agent:ProgramOnEnter()
 	Run = false
 	term.clear()
-	term.setCursorPos(1,1)
+	term.setCursorPos(1,2)
 	RunningExec = CurrentExec
 	shell.run(RunningExec)
-	RunningExec = "Agent OS"
 	print("<Press any key to return to OS>")
 	os.pullEvent("key")
+	RunningExec = "Agent OS"
 	Run = true
 end
 
 function Agent:ConfigOnEnter()
 	Run = false
 	term.clear()
-	term.setCursorPos(1,1)
+	term.setCursorPos(1,2)
 	RunningExec = CurrentExec
 	shell.run("edit",RunningExec)
-	RunningExec = "Agent OS"
 	print("<Press any key to return to OS>")
 	os.pullEvent("key")
+	RunningExec = "Agent OS"
 	Run = true
 end
 
@@ -403,26 +403,24 @@ end
 --Core
 
 function Agent:DrawBorder()
-	while true do
-		term.setCursorPos(1,1)
-		
-		term.blit("KomOS Agent                            "
-		,"fffffffffffffffffffffffffffffffffffffff"
-		,"000000000000000000000000000000000000000")
+	term.setCursorPos(1,1)
+	
+	term.blit("KomOS Agent                            "
+	,"fffffffffffffffffffffffffffffffffffffff"
+	,"000000000000000000000000000000000000000")
 
-		term.setCursorPos(12,1)
-		term.blit(RunningExec
-		,string.rep("f", #RunningExec)
-		,string.rep("6", #RunningExec))
+	term.setCursorPos(14,1)
+	term.blit(RunningExec
+	,string.rep("f", #RunningExec)
+	,string.rep("6", #RunningExec))
 
-		term.setCursorPos(34,1)
-		str = textutils.formatTime(os.time(),true)
-		curX = 34
-		for i = 1, #str do
-			term.setCursorPos(curX,1)
-			term.blit(string.sub(str, i, i), "f", "0")
-			curX = curX+1
-		end
+	term.setCursorPos(34,1)
+	str = textutils.formatTime(os.time(),true)
+	curX = 34
+	for i = 1, #str do
+		term.setCursorPos(curX,1)
+		term.blit(string.sub(str, i, i), "f", "0")
+		curX = curX+1
 	end
 end
 
@@ -430,6 +428,7 @@ function Agent:DrawWindow()
 	while exit == false do
 		if Run then
 			term.clear()
+			agent:DrawBorder()
 			if Window == 1 then
 				self:MainMenu()
 			elseif Window == 2 then
@@ -532,11 +531,20 @@ function Network()
 end
 
 function OsHeading()
-	agent:DrawBorder()
+	while true do
+		if RunningExec ~= "Agent OS" then
+			agent:DrawBorder()
+			sleep(0.05)
+		else
+			sleep(0.1)
+		end
+	end
 end
 
 parallel.waitForAny(Loop, Keys, Network, OsHeading)
 term.clear()
 term.setCursorPos(1,2)
-textutils.slowPrint("KomOS shutdown...",0.1)
+textutils.slowPrint("KomOS shutdown...",25)
+sleep(0.25)
 term.clear()
+term.setCursorPos(1,1)
