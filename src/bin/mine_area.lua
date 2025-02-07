@@ -22,10 +22,10 @@ local function mine_area(dimensions)
     dimensions.y = math.abs(dimensions.y)
     dimensions.z = math.abs(dimensions.z)
 
-    turtle.dig()
-    turtle.forward()
 
 
+    terra.dig()
+    terra.move(terra.Direction.Forward)
 
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
