@@ -1,4 +1,4 @@
-local meta = require("lib/meta")
+local meta = require("/lib/meta")
 
 local terra =
 {

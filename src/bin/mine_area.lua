@@ -1,6 +1,6 @@
-local config = require("/cfg/mine_area")
-local math   = require("/lib/math_ext")
-local terra  = require("/lib/terra")
+local config  = require("/cfg/mine_area")
+local terra   = require("/lib/terra")
+local mathext = require("/lib/math_ext")
 
 local argv = {...}
 local argc = #argv
@@ -90,8 +90,8 @@ local function main()
             io.write("Is the turtle on a chest? [y/N] ")
             config.OnChest = validate_confirmation(read(), "y", "n", false)
 
-            io.write("Dimensions: <", dimensions,    ">\n")
-            io.write("OnChest:    ",  config.OnChest, "\n")
+            io.write("Dimensions: <", dimensions:tostring(),    ">\n")
+            io.write("OnChest:    ",  tostring(config.OnChest),  "\n")
             io.write("\n")
 
             io.write("Is this correct? [Y/n] ")

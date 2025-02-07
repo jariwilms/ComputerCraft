@@ -1,5 +1,3 @@
-local math = {}
-
 function math.volume(vector)
     local volume = 1
 
@@ -19,5 +17,3 @@ function math.manhattan_distance(vector)
 
     return distance
 end
-
-return math
