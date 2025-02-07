@@ -3,7 +3,6 @@ local meta = require("/lib/meta")
 local terra =
 {
     ---@enum terra.Direction
-    ---@enum terra.Direction
     Direction    = meta.read_only
     ({
         Forward  = 1,
@@ -13,7 +12,6 @@ local terra =
         Up       = 5,
         Down     = 6,
     }),
-    ---@enum terra.Orientation
     ---@enum terra.Orientation
     Orientation  = meta.read_only
     ({
@@ -27,13 +25,11 @@ local terra =
         Right    = 4,
     }),
     ---@enum terra.Rotation
-    ---@enum terra.Rotation
     Rotation     = meta.read_only
     ({
         Left  = 1,
         Right = 2,
     }),
-    ---@enum terra.Cardinal
     ---@enum terra.Cardinal
     Cardinal     = meta.read_only
     ({
@@ -43,7 +39,6 @@ local terra =
         West  = 4,
     }),
     ---@enum terra.DigDirection
-    ---@enum terra.DigDirection
     DigDirection = meta.read_only
     ({
         Front = 1,
@@ -52,10 +47,6 @@ local terra =
     }),
 }
 
----@param rotation     terra.Rotation
----@param repetitions? integer
----@param orientation? terra.Orientation
----@return             boolean
 ---@param rotation     terra.Rotation
 ---@param repetitions? integer
 ---@param orientation? terra.Orientation
@@ -96,16 +87,7 @@ end
 ---@param position?    any
 ---@param orientation? terra.Orientation
 ---@return             boolean
----@param direction    terra.Direction
----@param distance?    integer
----@param position?    any
----@param orientation? terra.Orientation
----@return             boolean
 function terra.move(direction, distance, position, orientation)
-    distance    = distance    or 1
-    position    = position    or vector.new()
-    orientation = orientation or terra.Orientation.new()
-
     distance    = distance    or 1
     position    = position    or vector.new()
     orientation = orientation or terra.Orientation.new()
@@ -160,8 +142,8 @@ function terra.move(direction, distance, position, orientation)
     return false
 end
 
----@param digDirection? terra.DigDirection
----@return              boolean
+---@param digDirection terra.DigDirection
+---@return             boolean
 function terra.dig(digDirection)
     digDirection = digDirection or terra.DigDirection.Front
 
