@@ -47,83 +47,100 @@ local terra =
     }),
 }
 
----@param rotation     terra.Rotation
----@param repetitions? integer
----@param orientation? terra.Orientation
-function terra.turn(rotation, repetitions, orientation)
-    repetitions = repetitions or 1
+---@param  rotation     terra.Rotation
+---@param  orientation? terra.Orientation
+---@return              boolean
+function terra.turn(rotation, orientation)
     orientation = orientation or terra.Orientation.new()
 
-    for _ = 1, repetitions do
-        if     rotation == terra.Rotation.Left  then
-            repeat until turtle.turnLeft()
+    if     rotation == terra.Rotation.Left  then
+        if not turtle.turnLeft() then return false end
 
-            orientation[0] = orientation[0] + 1
-            if orientation[0] == 5 then orientation[0] = terra.Orientation.Forward end
-        elseif rotation == terra.Rotation.Right then
-            repeat until turtle.turnRight()
+        orientation[0] = orientation[0] + 1
+        if orientation[0] == 5 then orientation[0] = terra.Orientation.Forward end
+    elseif rotation == terra.Rotation.Right then
+        if not turtle.turnRight() then return false end
 
-            orientation[0] = orientation[0] - 1
-            if orientation[0] == 0 then orientation[0] = terra.Orientation.Right end
-        else   error("Invalid Rotation!")
-        end
+        orientation[0] = orientation[0] - 1
+        if orientation[0] == 0 then orientation[0] = terra.Orientation.Right end
+    else   error("Invalid Rotation!")
     end
+
+    return true
 end
 
----@param direction    terra.Direction
----@param distance?    integer
----@param position?    any
----@param orientation? terra.Orientation
-function terra.move(direction, distance, position, orientation)
-    distance    = distance    or 1
+---@param  rotation     terra.Rotation
+---@param  orientation? terra.Orientation
+function terra.force_turn(rotation, orientation)
+    repeat until terra.turn(rotation, orientation)
+end
+
+---@param  direction    terra.Direction
+---@param  position?    any
+---@param  orientation? terra.Orientation
+---@return              boolean
+function terra.move(direction, position, orientation)
     position    = position    or vector.new()
     orientation = orientation or terra.Orientation.new()
 
-    for _ = 1, distance do
-        if     direction == terra.Direction.Forward  then
-            repeat until turtle.forward()
+    if     direction == terra.Direction.Forward  then
+        if not turtle.forward() then return false end
 
-            if orientation[0] == terra.Orientation.Forward  then position.z = position.z + 1 end
-            if orientation[0] == terra.Orientation.Left     then position.x = position.x - 1 end
-            if orientation[0] == terra.Orientation.Backward then position.z = position.z - 1 end
-            if orientation[0] == terra.Orientation.Right    then position.x = position.x + 1 end
-        elseif direction == terra.Direction.Backward then
-            repeat until turtle.back()
+        if orientation[0] == terra.Orientation.Forward  then position.z = position.z + 1 end
+        if orientation[0] == terra.Orientation.Left     then position.x = position.x - 1 end
+        if orientation[0] == terra.Orientation.Backward then position.z = position.z - 1 end
+        if orientation[0] == terra.Orientation.Right    then position.x = position.x + 1 end
+    elseif direction == terra.Direction.Backward then
+        if not turtle.back() then return false end
 
-            if orientation[0] == terra.Orientation.Forward  then position.z = position.z - 1 end
-            if orientation[0] == terra.Orientation.Left     then position.x = position.x + 1 end
-            if orientation[0] == terra.Orientation.Backward then position.z = position.z + 1 end
-            if orientation[0] == terra.Orientation.Right    then position.x = position.x - 1 end
-        elseif direction == terra.Direction.Left     then
-            terra.turn(terra.Rotation.Left, 1, orientation)
-            terra.move(terra.Direction.Forward, 1, position, orientation)
-            terra.turn(terra.Rotation.Right, 1, orientation)
-        elseif direction == terra.Direction.Right    then
-            terra.turn(terra.Rotation.Right, 1, orientation)
-            terra.move(terra.Direction.Forward, 1, position, orientation)
-            terra.turn(terra.Rotation.Left, 1, orientation)
-        elseif direction == terra.Direction.Up       then
-            repeat until turtle.up()
+        if orientation[0] == terra.Orientation.Forward  then position.z = position.z - 1 end
+        if orientation[0] == terra.Orientation.Left     then position.x = position.x + 1 end
+        if orientation[0] == terra.Orientation.Backward then position.z = position.z + 1 end
+        if orientation[0] == terra.Orientation.Right    then position.x = position.x - 1 end
+    elseif direction == terra.Direction.Left     then
+        terra.turn(terra.Rotation.Left, orientation)
+        terra.move(terra.Direction.Forward, position, orientation)
+        terra.turn(terra.Rotation.Right, orientation)
+    elseif direction == terra.Direction.Right    then
+        terra.turn(terra.Rotation.Right, orientation)
+        terra.move(terra.Direction.Forward, position, orientation)
+        terra.turn(terra.Rotation.Left, orientation)
+    elseif direction == terra.Direction.Up       then
+        if not turtle.up() then return false end
 
-            position.y = position.y + 1
-        elseif direction == terra.Direction.Down     then
-            repeat until turtle.down()
+        position.y = position.y + 1
+    elseif direction == terra.Direction.Down     then
+        if not turtle.down() then return false end
 
-            position.y = position.y - 1
-        else   error("Invalid Direction!")
-        end
+        position.y = position.y - 1
+    else   error("Invalid Direction!")
+    end
+
+    return true
+end
+
+---@param  direction    terra.Direction
+---@param  position?    any
+---@param  orientation? terra.Orientation
+function terra.force_move(direction, position, orientation)
+    repeat until terra.move(direction, position, orientation)
+end
+
+---@param  direction? terra.DigDirection
+---@return            boolean
+function terra.dig(direction)
+    direction = direction or terra.DigDirection.Front
+
+    if     direction == terra.DigDirection.Front then return turtle.dig()
+    elseif direction == terra.DigDirection.Up    then return turtle.digUp()
+    elseif direction == terra.DigDirection.Down  then return turtle.digDown()
+    else   error("Invalid DigDirection!")
     end
 end
 
----@param digDirection? terra.DigDirection
-function terra.dig(digDirection)
-    digDirection = digDirection or terra.DigDirection.Front
-
-    if     digDirection == terra.DigDirection.Front then repeat until turtle.dig()
-    elseif digDirection == terra.DigDirection.Up    then repeat until turtle.digUp()
-    elseif digDirection == terra.DigDirection.Down  then repeat until turtle.digDown()
-    else   error("Invalid DigDirection!")
-    end
+---@param  direction? terra.DigDirection
+function terra.force_dig(direction)
+    repeat until terra.dig(direction)
 end
 
 return terra

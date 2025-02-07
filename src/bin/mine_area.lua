@@ -14,9 +14,14 @@ local function mine_area(dimensions)
 
 
 
-    if dimensions.z < 0 then terra.turn(terra.Rotation.Left, 2); dimensions.x = -dimensions.x end
-    if dimensions.x < 0 then rotation = terra.Rotation.Left                                   end
-    if dimensions.y < 0 then error("Y dimensions < 0 are not yet supported")                  end
+    if dimensions.z < 0 then
+        terra.turn(terra.Rotation.Left)
+        terra.turn(terra.Rotation.Left)
+
+        dimensions.x = -dimensions.x
+    end
+    if dimensions.x < 0 then rotation = terra.Rotation.Left                  end
+    if dimensions.y < 0 then error("Y dimensions < 0 are not yet supported") end
 
     dimensions.x = math.abs(dimensions.x)
     dimensions.y = math.abs(dimensions.y)
@@ -31,14 +36,14 @@ local function mine_area(dimensions)
         for _ = 1, dimensions.x do
             for _ = 1, dimensions.z - 1 do
                 terra.dig(terra.DigDirection.Front)
-                terra.move(terra.Direction.Forward, 1, position, orientation)
+                terra.move(terra.Direction.Forward, position, orientation)
             end
 
             if _ < dimensions.x then
-                terra.turn(rotation, 1, orientation)
+                terra.turn(rotation, orientation)
                 terra.dig(terra.DigDirection.Front)
-                terra.move(terra.Direction.Forward, 1, position, orientation)
-                terra.turn(rotation, 1, orientation)
+                terra.move(terra.Direction.Forward, position, orientation)
+                terra.turn(rotation, orientation)
 
                 if     rotation == terra.Rotation.Left  then rotation = terra.Rotation.Right
                 elseif rotation == terra.Rotation.Right then rotation = terra.Rotation.Left
@@ -48,9 +53,9 @@ local function mine_area(dimensions)
 
         if _ < dimensions.y then
             terra.dig(terra.DigDirection.Up)
-            terra.move(terra.Direction.Up, 1, position, orientation)
-            terra.turn(terra.Rotation.Left, 1, orientation)
-            terra.turn(terra.Rotation.Left, 1, orientation)
+            terra.move(terra.Direction.Up, position, orientation)
+            terra.turn(terra.Rotation.Left, orientation)
+            terra.turn(terra.Rotation.Left, orientation)
         end
     end
 end
