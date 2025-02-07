@@ -1,5 +1,7 @@
 local meta =
 {
+    ---@param _ table
+    ---@return  table
     read_only = function(_)
         local proxy = {}
         local meta =
