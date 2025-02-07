@@ -62,8 +62,6 @@ function terra.turn(rotation, repetitions, orientation)
                 if orientation[0] == 5 then orientation[0] = terra.Orientation.Forward end
 
                 return true
-
-                return true
             end
         elseif rotation == terra.Rotation.Right then
             if turtle.turnRight() then
@@ -71,14 +69,11 @@ function terra.turn(rotation, repetitions, orientation)
                 if orientation[0] == 0 then orientation[0] = terra.Orientation.Right end
 
                 return true
-
-                return true
             end
         else   error("Invalid Rotation!")
         end
     end
 
-    return false
     return false
 end
 
