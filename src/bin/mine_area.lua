@@ -9,7 +9,7 @@ local argc = #argv
 
 local function mine_area(dimensions)
     local position    = vector.new()
-    local orientation = terra.Orientation.Forward
+    local orientation = terra.Orientation.new()
     local rotation    = terra.Rotation.Right
 
 
@@ -35,10 +35,10 @@ local function mine_area(dimensions)
             end
 
             if _ < dimensions.x then
-                orientation = terra.turn(rotation, 1, orientation)
+                terra.turn(rotation, 1, orientation)
                 terra.dig(terra.DigDirection.Front)
                 terra.move(terra.Direction.Forward, 1, position, orientation)
-                orientation = terra.turn(rotation, 1, orientation)
+                terra.turn(rotation, 1, orientation)
 
                 if     rotation == terra.Rotation.Left  then rotation = terra.Rotation.Right
                 elseif rotation == terra.Rotation.Right then rotation = terra.Rotation.Left
@@ -49,8 +49,8 @@ local function mine_area(dimensions)
         if _ < dimensions.y then
             terra.dig(terra.DigDirection.Up)
             terra.move(terra.Direction.Up, 1, position, orientation)
-            orientation = terra.turn(terra.Rotation.Left, 1, orientation)
-            orientation = terra.turn(terra.Rotation.Left, 1, orientation)
+            terra.turn(terra.Rotation.Left, 1, orientation)
+            terra.turn(terra.Rotation.Left, 1, orientation)
         end
     end
 end

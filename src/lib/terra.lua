@@ -13,6 +13,10 @@ local terra =
     }),
     Orientation  = meta.read_only
     ({
+        new = function()
+            return setmetatable({ [0] = 1 }, {})
+        end,
+
         Forward  = 1,
         Left     = 2,
         Backward = 3,
@@ -40,18 +44,18 @@ local terra =
 
 function terra.turn(rotation, repetitions, orientation)
     repetitions = repetitions or 1
-    orientation = orientation or terra.Orientation.Forward
+    orientation = orientation or terra.Orientation.new()
 
     for _ = 1, repetitions do
         if     rotation == terra.Rotation.Left  then
             if turtle.turnLeft() then
-                orientation = orientation + 1
-                if orientation == 5 then orientation = terra.Orientation.Forward end
+                orientation[0] = orientation[0] + 1
+                if orientation[0] == 5 then orientation[0] = terra.Orientation.Forward end
             end
         elseif rotation == terra.Rotation.Right then
             if turtle.turnRight() then
-                orientation = orientation - 1
-                if orientation == 0 then orientation = terra.Orientation.Right end
+                orientation[0] = orientation[0] - 1
+                if orientation[0] == 0 then orientation[0] = terra.Orientation.Right end
             end
         else   error("Invalid Rotation!")
         end
@@ -64,32 +68,32 @@ function terra.move(direction, distance, position, orientation)
     for _ = 1, distance do
         if     direction == terra.Direction.Forward  then
             if turtle.forward() then
-                if orientation == terra.Orientation.Forward  then position.z = position.z + 1 end
-                if orientation == terra.Orientation.Left     then position.x = position.x - 1 end
-                if orientation == terra.Orientation.Backward then position.z = position.z - 1 end
-                if orientation == terra.Orientation.Right    then position.x = position.x + 1 end
+                if orientation[0] == terra.Orientation.Forward  then position.z = position.z + 1 end
+                if orientation[0] == terra.Orientation.Left     then position.x = position.x - 1 end
+                if orientation[0] == terra.Orientation.Backward then position.z = position.z - 1 end
+                if orientation[0] == terra.Orientation.Right    then position.x = position.x + 1 end
 
                 return true
             end
         elseif direction == terra.Direction.Backward then
             if turtle.back() then
-                if orientation == terra.Orientation.Forward  then position.z = position.z - 1 end
-                if orientation == terra.Orientation.Left     then position.x = position.x + 1 end
-                if orientation == terra.Orientation.Backward then position.z = position.z + 1 end
-                if orientation == terra.Orientation.Right    then position.x = position.x - 1 end
+                if orientation[0] == terra.Orientation.Forward  then position.z = position.z - 1 end
+                if orientation[0] == terra.Orientation.Left     then position.x = position.x + 1 end
+                if orientation[0] == terra.Orientation.Backward then position.z = position.z + 1 end
+                if orientation[0] == terra.Orientation.Right    then position.x = position.x - 1 end
 
                 return true
             end
         elseif direction == terra.Direction.Left     then
-            orientation = terra.turn(terra.Rotation.Left, 1, orientation)
+            terra.turn(terra.Rotation.Left, 1, orientation)
             terra.move(terra.Direction.Forward, 1, position, orientation)
-            orientation = terra.turn(terra.Rotation.Right, 1, orientation)
+            terra.turn(terra.Rotation.Right, 1, orientation)
 
             return true
         elseif direction == terra.Direction.Right    then
-            orientation = terra.turn(terra.Rotation.Right, 1, orientation)
+            terra.turn(terra.Rotation.Right, 1, orientation)
             terra.move(terra.Direction.Forward, 1, position, orientation)
-            orientation = terra.turn(terra.Rotation.Left, 1, orientation)
+            terra.turn(terra.Rotation.Left, 1, orientation)
 
             return true
         elseif direction == terra.Direction.Up       then
