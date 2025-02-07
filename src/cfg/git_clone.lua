@@ -11,7 +11,7 @@ local urls =
                 { url = "src/cfg/mine_area.lua", path = "cfg/mine_area" },
                 { url = "src/lib/meta.lua",      path = "lib/meta" },
                 { url = "src/lib/math_ext.lua",  path = "lib/math_ext" },
-                { url = "src/lib/mining.lua",    path = "lib/mining" },
+                { url = "src/lib/terra.lua",     path = "lib/terra" },
             },
         },
     },
