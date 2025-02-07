@@ -2,6 +2,7 @@ local meta = require("/lib/meta")
 
 local terra =
 {
+    ---@enum terra.Direction
     Direction    = meta.read_only
     ({
         Forward  = 1,
@@ -11,6 +12,7 @@ local terra =
         Up       = 5,
         Down     = 6,
     }),
+    ---@enum terra.Orientation
     Orientation  = meta.read_only
     ({
         new = function()
@@ -22,11 +24,13 @@ local terra =
         Backward = 3,
         Right    = 4,
     }),
+    ---@enum terra.Rotation
     Rotation     = meta.read_only
     ({
         Left  = 1,
         Right = 2,
     }),
+    ---@enum terra.Cardinal
     Cardinal     = meta.read_only
     ({
         North = 1,
@@ -34,6 +38,7 @@ local terra =
         South = 3,
         West  = 4,
     }),
+    ---@enum terra.DigDirection
     DigDirection = meta.read_only
     ({
         Front = 1,
@@ -42,6 +47,10 @@ local terra =
     }),
 }
 
+---@param rotation     terra.Rotation
+---@param repetitions? integer
+---@param orientation? terra.Orientation
+---@return             boolean
 function terra.turn(rotation, repetitions, orientation)
     repetitions = repetitions or 1
     orientation = orientation or terra.Orientation.new()
@@ -51,20 +60,33 @@ function terra.turn(rotation, repetitions, orientation)
             if turtle.turnLeft() then
                 orientation[0] = orientation[0] + 1
                 if orientation[0] == 5 then orientation[0] = terra.Orientation.Forward end
+
+                return true
             end
         elseif rotation == terra.Rotation.Right then
             if turtle.turnRight() then
                 orientation[0] = orientation[0] - 1
                 if orientation[0] == 0 then orientation[0] = terra.Orientation.Right end
+
+                return true
             end
         else   error("Invalid Rotation!")
         end
     end
 
-    return orientation
+    return false
 end
 
+---@param direction    terra.Direction
+---@param distance?    integer
+---@param position?    any
+---@param orientation? terra.Orientation
+---@return             boolean
 function terra.move(direction, distance, position, orientation)
+    distance    = distance    or 1
+    position    = position    or vector.new()
+    orientation = orientation or terra.Orientation.new()
+
     for _ = 1, distance do
         if     direction == terra.Direction.Forward  then
             if turtle.forward() then
@@ -115,6 +137,8 @@ function terra.move(direction, distance, position, orientation)
     return false
 end
 
+---@param digDirection terra.DigDirection
+---@return             boolean
 function terra.dig(digDirection)
     if     digDirection == terra.DigDirection.Front then return turtle.dig()
     elseif digDirection == terra.DigDirection.Up    then return turtle.digUp()
