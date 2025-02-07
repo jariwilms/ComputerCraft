@@ -1,23 +1,23 @@
-local math =
-{
-    volume = function (dimensions)
-        local volume = 1
+local math = {}
 
-        for key, _ in pairs(dimensions) do
-            volume = volume * math.abs(dimensions[key])
-        end
+function math.volume(vector)
+    local volume = 1
 
-        return volume
-    end,
-    manhattan_distance = function(dimensions)
-        local distance = 0
+    for _, value in pairs(vector) do
+        volume = volume * math.abs(value)
+    end
 
-        for key, _ in pairs(dimensions) do
-            distance = distance + math.abs(dimensions[key])
-        end
+    return volume
+end
 
-        return distance
-    end,
-}
+function math.manhattan_distance(vector)
+    local distance = 0
+
+    for _, value in pairs(vector) do
+        distance = distance + math.abs(value)
+    end
+
+    return distance
+end
 
 return math
