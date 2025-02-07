@@ -137,8 +137,8 @@ function terra.move(direction, distance, position, orientation)
     return false
 end
 
----@param digDirection terra.DigDirection
----@return             boolean
+---@param digDirection? terra.DigDirection
+---@return              boolean
 function terra.dig(digDirection)
     digDirection = digDirection or terra.DigDirection.Front
 
