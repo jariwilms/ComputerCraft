@@ -15,10 +15,12 @@ function inventory.new()
     local _ = {}
 
     for i = 1, config.InventorySlots, 1 do
-        _[i] = item.empty()
-    end
+        local data = turtle.getItemDetail(i)
 
-    _.update_all()
+        if data then _[i] = item.new(data.name, data.count, data.count + turtle.getItemSpace(i), data.damage)
+        else         _[i] = item.empty()
+        end
+    end
 
     return setmetatable(_,
     {
