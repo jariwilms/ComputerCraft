@@ -70,6 +70,15 @@ local function validate_confirmation(response, pass, fail, default)
     return false
 end
 
+local function refuel(amount)
+    io.write("Fuel level inadequate, refueling...\n")
+
+    turtle.select(1)
+    if turtle.refuel(0) and not turtle.refuel(amount) then error("Not enough fuel")
+    else error("Invalid fuel source!")
+    end
+end
+
 local function main()
     term.clear()
     term.setCursorPos(1, 1)
@@ -109,30 +118,24 @@ local function main()
 
 
 
-    local distance     = math.volume(dimensions) + math.manhattan_distance(dimensions) --worst case distance
-    local fuelLevel    = turtle.getFuelLevel()
-    local requiredFuel = distance - fuelLevel
+    local volume       = math.volume(dimensions)
+    local distance     = math.manhattan_distance(dimensions)
+    local maxDistance  = volume + distance                   --worst case
+    local requiredFuel = maxDistance - turtle.getFuelLevel()
 
-    if requiredFuel > 0 then
-        io.write("Fuel level inadequate, refueling...\n")
-
-        turtle.select(1)
-        if turtle.refuel(0) and not turtle.refuel(requiredFuel) then error("Not enough fuel")
-        else error("Invalid fuel source!")
-        end
-    end
+    if requiredFuel > 0 then refuel(requiredFuel) end
 
 
 
     term.clear()
     term.setCursorPos(1, 1)
 
-    io.write("Beginning excavation\n")
-    io.write("Mining " .. math.volume(dimensions) .. " blocks\n")
+    io.write("Beginning excavation...\n")
+    io.write("Volume: " .. math.volume(dimensions) .. " blocks.\n")
 
     mine_area(dimensions)
 
-    io.write("Excavation complete!\n")
+    io.write("Excavation complete.\n")
 end
 
 main()
