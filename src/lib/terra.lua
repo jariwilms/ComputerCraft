@@ -140,7 +140,7 @@ end
 
 ---@param  direction? terra.DigDirection
 function terra.force_dig(direction)
-    repeat until terra.dig(direction)
+    repeat until terra.dig(direction) and not turtle.inspect()
 end
 
 return terra
