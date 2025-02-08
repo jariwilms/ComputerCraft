@@ -209,15 +209,22 @@ local function init()
 
     setmetatable(inventory,
     {
-        __tostring = function (_)
+        __metatable = {},
+        __tostring  = function (_)
             local str = ""
 
             for index, value in ipairs(_) do
-                str = str .. "[" .. index .. "] ".. tostring(value) .. "\n"
+                str = str .. "["
+
+                for _ = 1, math.floor(math.log(index, 10)), 1 do --just is just
+                    str = str .. " "
+                end
+
+                str = str .. index .. "] ".. tostring(value) .. "\n"
             end
 
             return str
-        end
+        end,
     })
 
     return inventory

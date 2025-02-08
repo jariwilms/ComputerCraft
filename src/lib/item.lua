@@ -34,8 +34,9 @@ end
 local function init()
     setmetatable(item,
     {
-        __eq       = function (left, right) return left.identifier == right.identifier end,
-        __tostring = function (_)           return _.identifier .. ", [" .. _.count .. "/" .. _.limit .. "], " .. _.damage end
+        __metatable = {},
+        __eq        = function (left, right) return left.identifier == right.identifier end,
+        __tostring  = function (_)           return _.identifier .. ", [" .. _.count .. "/" .. _.limit .. "], " .. _.damage end,
     })
 
     return item
