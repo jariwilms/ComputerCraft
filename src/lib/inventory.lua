@@ -228,7 +228,7 @@ local function __()
     })
 
     local proxy = {}
-    local meta =
+    local meta  =
     {
         __index    = inventory,
         __newindex = function (t, k, v)
