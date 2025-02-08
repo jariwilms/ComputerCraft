@@ -207,9 +207,18 @@ local function __()
         inventory.update(i)
     end
 
-    setmetatable(inventory,
+    local proxy = {}
+    local meta  =
     {
-        __metatable = {},
+        __index     = inventory,
+        __newindex  = function (t, k, v)
+            local n = tonumber(k)
+
+            if not n or not inventory.in_bounds(n) then error("Updating non-item keys is not allowed!", 2) end
+            if getmetatable(t) ~= item             then error("Table must be of type 'item'!") end
+
+            t[k] = v
+        end,
         __tostring  = function (_)
             local str = ""
 
@@ -224,18 +233,6 @@ local function __()
             end
 
             return str
-        end,
-    })
-
-    local proxy = {}
-    local meta  =
-    {
-        __index    = inventory,
-        __newindex = function (t, k, v)
-            local n = tonumber(k)
-            if not n or not inventory.in_bounds(n) then error("Updating non-item keys is not allowed!", 2) end
-
-            t[k] = v
         end,
     }
 
