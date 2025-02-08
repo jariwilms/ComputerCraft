@@ -136,15 +136,12 @@ end
 ---@param amount? integer
 function inventory.drop(index, amount)
     if not inventory.in_bounds(index) then error("Index out of range!", 2) end
-
-    if amount and amount > 0 then amount = math.min(amount, inventory[index].count)
-    else                          amount = inventory[index].count
-    end
+    if not amount or amount < 1       then return end
 
     turtle.select(index)
-    turtle.drop(amount)
+    turtle.drop(math.min(amount, inventory[index].count))
 
-    inventory[index] = item.empty()
+    inventory.update(index)
 end
 
 ---Drops all items
@@ -234,5 +231,5 @@ setmetatable(inventory,
 
 
 
-return inventory, item
+return inventory
 
