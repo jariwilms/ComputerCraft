@@ -1,30 +1,37 @@
-local item = require("/lib/item")
+local config = require("/cfg/inventory")
+local item   = require("/lib/item")
 
 
 
 ---Represents the internal state of a turtle's inventory
----Indices are valid in the range [1, 16]
----Methods will always restore the previously selected index
+---Indices are valid in the range [1, config.InventorySlots]
+---Methods are never dependent on the selected slot
 ---@class inventory
-local inventory =
-{
-    [ 1] = item.empty(),
-    [ 2] = item.empty(),
-    [ 3] = item.empty(),
-    [ 4] = item.empty(),
-    [ 5] = item.empty(),
-    [ 6] = item.empty(),
-    [ 7] = item.empty(),
-    [ 8] = item.empty(),
-    [ 9] = item.empty(),
-    [10] = item.empty(),
-    [11] = item.empty(),
-    [12] = item.empty(),
-    [13] = item.empty(),
-    [14] = item.empty(),
-    [15] = item.empty(),
-    [16] = item.empty(),
-}
+local inventory = {}
+
+---Creates a new inventory
+---@return inventory
+function inventory.new()
+    local _ = {}
+
+    for i = 1, config.InventorySlots, 1 do
+        _[i] = item.empty()
+    end
+
+    _.update_all()
+
+    return setmetatable(_,
+    {
+        __tostring = function(self)
+            local str = ""
+            for index, value in ipairs(self) do
+                str = str .. "[" .. index .. "] ".. tostring(value) .. "\n"
+            end
+
+            return str
+        end,
+    })
+end
 
 ---Returns true if the given index is valid
 ---@param index integer
@@ -219,14 +226,7 @@ end
 
 setmetatable(inventory,
 {
-    __tostring = function(self)
-        local str = ""
-        for index, value in ipairs(self) do
-            str = str .. "[" .. index .. "] ".. tostring(value) .. "\n"
-        end
 
-        return str
-    end
 })
 
 
