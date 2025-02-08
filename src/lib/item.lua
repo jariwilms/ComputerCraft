@@ -13,7 +13,7 @@ local item = {}
 ---@param damage?    number
 ---@return           item
 function item.new(identifier, count, limit, damage)
-    return setmetatable({ identifier = identifier, count = count, limit = limit, damage = damage or 0 }, item)
+    return setmetatable({ identifier = identifier, count = count, limit = limit, damage = damage or 0 }, getmetatable(item))
 end
 
 ---Copies an item
@@ -30,11 +30,12 @@ function item.empty()
 end
 
 
+
 local function init()
     setmetatable(item,
     {
         __eq       = function (left, right) return left.identifier == right.identifier end,
-        __tostring = function (self)        return self.identifier .. ", [" .. self.count .. "/" .. self.limit .. "], " .. self.damage end
+        __tostring = function (_)           return _.identifier .. ", [" .. _.count .. "/" .. _.limit .. "], " .. _.damage end
     })
 
     return item

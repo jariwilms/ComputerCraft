@@ -143,7 +143,7 @@ function inventory.full()
     local empty = item.empty()
 
     for _, value in ipairs(inventory) do
-        if value.identifier == empty.identifier then return false end
+        if value == empty then return false end
     end
 
     return true
@@ -155,7 +155,7 @@ function inventory.empty()
     local empty = item.empty()
 
     for _, value in ipairs(inventory) do
-        if value.identifier ~= empty.identifier then return true end
+        if value ~= empty then return true end
     end
 
     return false
@@ -180,7 +180,7 @@ function inventory.defragment(offset)
         local it        = inventory.at(i)
 
         for key, value in pairs(candidates) do
-            if value.identifier == it.identifier then
+            if value == it then
                 while true do --while the amount of space in the current slot is gt 0 and candidate => transfer
 
                 end
