@@ -75,6 +75,7 @@ end
 
 function InstallAllReqParallel()
 	local Funcs = {}
+
     --Install utils
 	table.insert(Funcs, function() InstallReq("u_Sprite", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Sprite.lua?v=1") end)
 	table.insert(Funcs, function() InstallReq("u_Config", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Config.lua?v=1") end)
@@ -89,7 +90,9 @@ function InstallAllReqParallel()
 
 	--Debug
 	table.insert(Funcs, function() InstallReq("Debug_Test", "https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/src/KomOS/Debug_Test.lua?v=1") end)
+
 	parallel.waitForAll(table.unpack(Funcs))
+	
 	--Create startup
 	SetupStartup()
 end

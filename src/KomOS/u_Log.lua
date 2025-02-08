@@ -13,11 +13,10 @@
 --Class
 
 --Function
-local Logger = {Logfile = "log", nilfile = "nil"}
+local Logger = {Logfile = "log"}
 
-function Logger.Init(Logfile,nilfile,ClearFiles)
+function Logger.Init(Logfile,ClearFiles)
     Logger.Logfile = Logfile
-    Logger.nilfile = nilfile
     if ClearFiles then
         Logger.ClearLog()
         Logger.ClearNil()
@@ -62,7 +61,7 @@ function Logger.TermLog(Text)
     term.blit(type, string.rep("0", #type), string.rep("f", #type))
     term.write("] ")
     term.blit(Text, string.rep("0", #Text), string.rep("f", #Text))
-    print("")
+    print("") --term.write doesn't allow \n... sorry
 end
 
 function Logger.TermWarn(Text)
@@ -75,7 +74,7 @@ function Logger.TermWarn(Text)
     term.blit(type, string.rep("4", #type), string.rep("f", #type))
     term.write("] ")
     term.blit(Text, string.rep("0", #Text), string.rep("f", #Text))
-    print("")
+    print("") --term.write doesn't allow \n... sorry
 end
 
 function Logger.TermError(Text)
@@ -88,7 +87,7 @@ function Logger.TermError(Text)
     term.blit(type, string.rep("e", #type), string.rep("f", #type))
     term.write("] ")
     term.blit(Text, string.rep("0", #Text), string.rep("f", #Text))
-    print("")
+    print("") --term.write doesn't allow \n... sorry
 end
 
 function Logger.ClearTerm(Text)

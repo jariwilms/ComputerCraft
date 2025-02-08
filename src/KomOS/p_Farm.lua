@@ -55,7 +55,7 @@ function CheckCrop(Replant, ReadyAge)
 end
 
 function Plant(Replant)
-	local Success, SeedIndex, Data = Inv:GetFirstItem(Replant)
+	local Success, SeedIndex, Data = Inv.GetFirstItem(Replant)
 	if SeedIndex == -1 then
 		return
 	end
@@ -115,7 +115,7 @@ function CanStart(Seed)
 		return false
 	end
 	
-	local success Inv:GetFirstItem(Seed)
+	local success Inv.GetFirstItem(Seed)
 	if success then
 		term.setCursorPos(1,1)
 		term.clear()
@@ -123,13 +123,7 @@ function CanStart(Seed)
 		return false
 	end
 	
-	fullinv = true
-	for i=1,14 do
-		if turtle.getItemCount(i) < 64 then
-			fullinv = false
-		end
-	end
-	if fullinv then
+	if Inv.IsFull() then
 		term.setCursorPos(1,1)
 		term.clear()
 		print("Inventory full")
@@ -206,7 +200,7 @@ function RunFarm()
 		end
 		sleep(200)
 		TimesMovedY = 0
-		Inv:Defrag()
+		Inv.Defrag()
 	end
 end
 

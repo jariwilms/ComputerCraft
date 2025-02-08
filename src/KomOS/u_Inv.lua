@@ -3,36 +3,27 @@
 --Globals
 
 --Class
-Inventory = {data = {
-}}
-
-function Inventory.__init__ (data)
-    local self = {data=data}
-    setmetatable (self, {__index=Inventory})
-    return self
-end
-
-setmetatable (Inventory, {__call=Inventory.__init__})
+local Inventory = {}
 
 --functions
-function Inventory:GetInvSlot(idx, InvData)
+function Inventory.GetInvSlot(idx, InvData)
     local data = turtle.getItemDetail(idx)
     if data ~= nil then
         table.insert(InvData, data)
     end
 end
 
-function Inventory:GetInvParallel()
+function Inventory.GetInvParallel()
     local Funcs = {}
     local InvData = {}
     for i=1, 16 do
-        table.insert(Funcs, function() Inventory:GetInvSlot(i,InvData) end)
+        table.insert(Funcs, function() Inventory.GetInvSlot(i,InvData) end)
     end
     parallel.waitForAll(table.unpack(Funcs))
     --print(textutils.serialise(InvData))
 end
 
-function Inventory:GetInv()
+function Inventory.GetInv()
     InvData = {}
     for i=1, 16 do
 		local data = turtle.getItemDetail(i)
@@ -46,7 +37,7 @@ function Inventory:GetInv()
     return InvData
 end
 
-function Inventory:GetFirstItem(Item)
+function Inventory.GetFirstItem(Item)
     for i=1, 16 do
         local data = turtle.getItemDetail(i)
         if data ~= nil then
@@ -58,7 +49,7 @@ function Inventory:GetFirstItem(Item)
     return false, -1, 0
 end
 
-function Inventory:GetAllItem(Item)
+function Inventory.GetAllItem(Item)
     local ItemSlotsFound = 0
     local ItemData = {}
     for i=1, 16 do
@@ -73,7 +64,7 @@ function Inventory:GetAllItem(Item)
     return ItemData, ItemSlotsFound
 end
 
-function Inventory:GetItemCount(Item)
+function Inventory.GetItemCount(Item)
     local InvData, Slots = Inventory:GetAllItem(Item)
     local count = 0
     for i=1, Slots do
@@ -82,7 +73,7 @@ function Inventory:GetItemCount(Item)
     return count
 end
 
-function Inventory:SelectItem(Item)
+function Inventory.SelectItem(Item)
     local success, slot, count = Inventory:GetFirstItem(Item)
     if success then
         turtle.select(slot)
@@ -90,7 +81,7 @@ function Inventory:SelectItem(Item)
     return success
 end
 
-function Inventory:IsFull()
+function Inventory.IsFull()
     for i=1, 16 do
         local data = turtle.getItemDetail(i)
         if data ~= nil then
@@ -100,7 +91,7 @@ function Inventory:IsFull()
     return true
 end
 
-function Inventory:DropAllOfItem(Item)
+function Inventory.DropAllOfItem(Item)
     local InvData, Slots = Inventory:GetAllItem(Item)
     local count = 0
     for i=1, Slots do
@@ -110,11 +101,12 @@ function Inventory:DropAllOfItem(Item)
     return count
 end
 
-function Inventory:Defrag()
+function Inventory.Defrag()
     for i=1, 16 do
         local data = turtle.getItemDetail(i)
         if data ~= nil then
             print(data["name"].. " Found")
+
             local DefragInProc = true
             while DefragInProc do
                 local InvData, Slots = Inventory:GetAllItem(data["name"])
@@ -132,14 +124,17 @@ function Inventory:Defrag()
                         end
                     end
                 end
+
+                print("Checking if defrag is complete for item")
                 InvData, Slots = Inventory:GetAllItem(data["name"])
                 local SlotsNotFilled = 0
-                print("Checking if defrag is complete for item")
+                
                 for k=1, Slots do
                     if InvData[k]["count"] ~= 0 and turtle.getItemSpace(InvData[k]["slot"]) ~= 0 then
                         SlotsNotFilled = SlotsNotFilled + 1
                     end
                 end
+
                 print("Number of slots not finished: "..tostring(SlotsNotFilled))
                 if SlotsNotFilled < 2 then
                     DefragInProc = false
