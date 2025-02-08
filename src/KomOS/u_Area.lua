@@ -66,7 +66,7 @@ end
 function MapAxisArea()
 	print("Mapping axis")
 	Mapping = true
-	size = 1
+	local size = 1
 	while Mapping do
 		if turtle.inspect() == false then
 			size = size + 1 
