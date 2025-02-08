@@ -11,6 +11,7 @@ local meta =
         }
 
         setmetatable(proxy, meta)
+
         return proxy
     end
 }
