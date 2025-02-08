@@ -5,6 +5,14 @@ local urls =
     required =
     {
         {
+            url = "src/lib/inventory.lua", path = "lib/inventory",
+            dependencies =
+            {
+                --{ url = "src/cfg/inventory.lua", path = "cfg/inventory" },
+                { url = "src/lib/item.lua", path = "lib/item" },
+            },
+        },
+        {
             url = "src/bin/mine_area.lua", path = "bin/mine_area",
             dependencies =
             {
