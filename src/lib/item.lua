@@ -31,7 +31,7 @@ end
 
 
 
-local function init()
+local function __()
     setmetatable(item,
     {
         __eq        = function (left, right) return left.identifier == right.identifier end,
@@ -41,4 +41,4 @@ local function init()
     return item
 end
 
-return init()
+return __()
