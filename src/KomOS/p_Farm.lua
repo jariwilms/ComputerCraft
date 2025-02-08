@@ -27,7 +27,7 @@ if not fs.exists("c_Farm") then
 	FarmFile.close()
 	
 	ShowSetup()
-	event,key = os.pullEvent("key")
+	local event,key = os.pullEvent("key")
 end
 FarmConfig:setPath("c_Farm")
 --Global
@@ -205,7 +205,7 @@ function RunFarm()
 end
 
 function Stop()
-    event,key = os.pullEvent("key")
+    local event,key = os.pullEvent("key")
     return
 end
 
