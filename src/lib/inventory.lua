@@ -93,8 +93,6 @@ function inventory.transfer(from, to, amount)
     if not inventory.in_bounds(from) then error("Index out of range!", 2) end
     if not inventory.in_bounds(to)   then error("Index out of range!", 2) end
 
-    if from == to then return false end
-
     if turtle.select(from) and turtle.transferTo(to, amount) then
         inventory.update(from)
         inventory.update(to)
@@ -113,15 +111,22 @@ function inventory.swap(left, right)
     if not inventory.in_bounds(left)  then error("Index out of range!", 2) end
     if not inventory.in_bounds(right) then error("Index out of range!", 2) end
 
-    if left == right    then return false end
-    if inventory.full() then return false end
+    if left == right then return true  end
 
-    local placeholder = inventory.find(item.empty().identifier)
-    if not placeholder then return false end
+    local empty = item.empty()
 
-    if not inventory.transfer(left,        placeholder) then return false end
-    if not inventory.transfer(right,       left)        then return false end
-    if not inventory.transfer(placeholder, right)       then return false end
+    if     inventory[left] .identifier ~= empty.identifier and inventory[right].identifier ~= empty.identifier then
+        local placeholder = inventory.find(item.empty().identifier)
+        if not placeholder then return false end
+
+        if not inventory.transfer(left,        placeholder) or
+           not inventory.transfer(right,       left)        or
+           not inventory.transfer(placeholder, right)       then return false end
+    elseif inventory[left] .identifier ~= empty.identifier and inventory[right].identifier == empty.identifier then
+        return inventory.transfer(left, right)
+    elseif inventory[right].identifier == empty.identifier and inventory[left] .identifier ~= empty.identifier then
+        return inventory.transfer(right, left)
+    end
 
     return true
 end
