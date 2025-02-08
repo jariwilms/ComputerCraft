@@ -207,6 +207,19 @@ local function init()
         inventory.update(i)
     end
 
+    setmetatable(inventory,
+    {
+        __tostring = function (_)
+            local str = ""
+
+            for index, value in ipairs(_) do
+                str = str .. "[" .. index .. "] ".. tostring(value) .. "\n"
+            end
+
+            return str
+        end
+    })
+
     return inventory
 end
 
