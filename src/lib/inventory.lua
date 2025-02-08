@@ -20,10 +20,9 @@ end
 function inventory.update(index)
     if not inventory.in_bounds(index) then error("Index out of range!", 2) end
 
-    local data      = turtle.getItemDetail(index)
-    local stackSize = data.count + turtle.getItemSpace(index)
+    local data = turtle.getItemDetail(index)
 
-    if data then inventory[index] = item.new(data.name, data.count, stackSize, data.damage)
+    if data then inventory[index] = item.new(data.name, data.count, data.count + turtle.getItemSpace(index), data.damage)
     else         inventory[index] = item.empty()
     end
 end
