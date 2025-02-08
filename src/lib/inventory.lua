@@ -1,44 +1,4 @@
----@class item
----@field identifier string
----@field count      integer
----@field limit      integer
----@field damage     number
-local item = {}
-
----Creates a new item
----@param identifier string
----@param count      integer
----@param limit      integer
----@param damage?    number
----@return           item
-function item.new(identifier, count, limit, damage)
-    return setmetatable({ identifier = identifier, count = count, limit = limit, damage = damage or 0 },
-    {
-        __eq = function (left, right)
-            return
-                left.identifier == right.identifier --and
-                --left.count      == right.count      and
-                --left.limit      == right.limit      and
-                --left.damage     == right.damage
-        end,
-        __tostring = function (self) return self.identifier .. ", [" .. self.count .. "/" .. self.limit .. "], " .. self.damage end
-    })
-end
-
----Copies an item
----@param  other item
----@return       item
-function item.copy(other)
-    return item.new(other.identifier, other.count, other.limit, other.damage)
-end
-
----Creates an empty item
----@return item
-function item.empty()
-    return item.new("None", 0, 0, 0)
-end
-
-
+local item = require("/lib/item")
 
 
 
@@ -78,7 +38,10 @@ function inventory.update(index)
     if not inventory.in_bounds(index) then error("Index out of range!", 2) end
 
     local data = turtle.getItemDetail(index)
-    if data then inventory[index] = item.new(data.name, data.count, data.count + turtle.getItemSpace(index), data.damage) end
+
+    if data then inventory[index] = item.new(data.name, data.count, data.count + turtle.getItemSpace(index), data.damage)
+    else         inventory[index] = item.empty()
+    end
 end
 
 ---Updates all inventory slots
