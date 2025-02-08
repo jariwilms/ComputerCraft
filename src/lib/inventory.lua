@@ -207,10 +207,9 @@ local function __()
         inventory.update(i)
     end
 
-    local proxy = {}
-    local meta  =
+    setmetatable(inventory,
     {
-        __index     = inventory,
+        __metatable = {},
         __newindex  = function (t, k, v)
             local n = tonumber(k)
 
@@ -219,26 +218,9 @@ local function __()
 
             t[k] = v
         end,
-        __tostring  = function (_)
-            local str = ""
+    })
 
-            for index, value in ipairs(_) do
-                str = str .. "["
-
-                for _ = 1, math.floor(math.log(index, 10)), 1 do --just is just
-                    str = str .. " "
-                end
-
-                str = str .. index .. "] ".. tostring(value) .. "\n"
-            end
-
-            return str
-        end,
-    }
-
-    setmetatable(proxy, meta)
-
-    return proxy
+    return inventory
 end
 
 return __()
