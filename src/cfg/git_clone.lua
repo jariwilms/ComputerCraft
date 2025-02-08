@@ -9,7 +9,6 @@ local urls =
             dependencies =
             {
                 { url = "src/lib/item.lua", path = "lib/item" },
-                { url = "src/lib/meta.lua", path = "lib/meta" },
             },
         },
         {
