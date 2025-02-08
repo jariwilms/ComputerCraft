@@ -170,7 +170,7 @@ function inventory.empty()
     local empty = item.empty()
 
     for _, value in ipairs(inventory) do
-        if value ~= empty then return true end
+        if value.identifier ~= empty.identifier then return true end
     end
 
     return false
