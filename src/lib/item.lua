@@ -15,14 +15,8 @@ local item = {}
 function item.new(identifier, count, limit, damage)
     return setmetatable({ identifier = identifier, count = count, limit = limit, damage = damage or 0 },
     {
-        __eq = function (left, right)
-            return
-                left.identifier == right.identifier --and
-                --left.count      == right.count      and
-                --left.limit      == right.limit      and
-                --left.damage     == right.damage
-        end,
-        __tostring = function (self) return self.identifier .. ", [" .. self.count .. "/" .. self.limit .. "], " .. self.damage end
+        __eq       = function (left, right) return left.identifier == right.identifier end,
+        __tostring = function (self)        return self.identifier .. ", [" .. self.count .. "/" .. self.limit .. "], " .. self.damage end
     })
 end
 
