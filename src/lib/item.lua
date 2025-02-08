@@ -30,7 +30,7 @@ end
 ---Creates an empty item
 ---@return item
 function item.empty()
-    return item.new("None", 0, 0, 0)
+    return item.new("cc:none", 0, 0, 0)
 end
 
 return item
