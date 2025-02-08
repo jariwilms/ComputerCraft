@@ -26,7 +26,7 @@ function InstallOptinal(name, Link)
 end
 
 function InstallReq (name, Link)
-	if has_value (programs, name) then
+	if Has_value(programs, name) then
 		print(name.." Is already Installed, deleting and reinstalling")
 		shell.run("delete", name)
 	end
@@ -38,12 +38,12 @@ function SetupStartup()
 	if fs.exists("startup") then
 		shell.run("delete", "startup")
 	end
-	startup = fs.open("startup", "w")
+	local startup = fs.open("startup", "w")
 	startup.writeLine("shell.run(\"KomOS\")")
 	startup.close()
 end
 
-function has_value (tab, val)
+function Has_value (tab, val)
     for index, value in ipairs(tab) do
         if value == val then
             return true

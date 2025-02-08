@@ -31,7 +31,7 @@ end
 
 function SpriteRender.GetSize(image)
 	local x,y=0
-	str = image[1]
+	local str = image[1]
 	x = #str
 	y = #image
 	return x,y

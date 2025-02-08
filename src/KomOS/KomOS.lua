@@ -6,60 +6,60 @@
 local Sprite = require("u_Sprite")
 
 --Global
-Selected = 1
-SelectableX = 3
-MaxSelectable = 6
-CurrentExec = "Agent OS"
-RunningExec = "Agent OS"
-Run = true
-Pause = false
-exit = false
-Window = 1
-modem = peripheral.wrap("left")
-LastPackageSent = "00:00"
-LastPackageReceived = "00:00"
+local Selected = 1
+local SelectableX = 3
+local MaxSelectable = 6
+local CurrentExec = "Agent OS"
+local RunningExec = "Agent OS"
+local Run = true
+local Pause = false
+local exit = false
+local Window = 1
+local modem = peripheral.wrap("left")
+local LastPackageSent = "00:00"
+local LastPackageReceived = "00:00"
 
 --Images
 
-i_Program ={".------.",
+local i_Program ={".------.",
 			"| |__| |",
 			"|  ()  |",
 			"|______|",
 	}
 
-i_ProgramS={" ___ ",
+local i_ProgramS={" ___ ",
 			"| U |",
 			"|_"..string.char(8).."_|",
 	}
 	
-i_FileS =  {" __ ",
+local i_FileS =  {" __ ",
 			"| `|",
 			"|__|",
 	}
 
-i_folder = {".--.___ ",
+local i_folder = {".--.___ ",
 			"|  ____|",
 			"| /    |",
 			"|/_____|",
 	}
 	
-i_tinfo = {	"^.-----.",
+local i_tinfo = {	"^.-----.",
 			"H| === |",
 			"V|     |",
 			"||_____|",
 	}
 	
-i_exit = {	"   ||   ",
+local i_exit = {	"   ||   ",
 			" / || \\ ",
 			"|      |",
 			" \\____/ ",
 	}
-i_exitS = {	"  |  ",
+local i_exitS = {	"  |  ",
 			"/ | \\",
 		   "\\___/",
 	}
 	
-i_signal = {" .-----.",
+local i_signal = {" .-----.",
 			"  .---. ",
 			"   .-.  ",
 			"    O   ",
@@ -90,7 +90,7 @@ end
 setmetatable (Agent, {__call=Agent.__init__})
 
 --OS self
-agent = Agent
+local agent = Agent
 
 ------------------------------------------------------------------------------------------
 
@@ -183,7 +183,7 @@ function Agent:Programs()
 			local x,y
 			if i <= SelectableX then y = 2 else y = 6 end
 			x = 3 + (math.fmod(i - 1,SelectableX))*10
-			str = string.gsub(v,"p_","")
+			local str = string.gsub(v,"p_","")
 			self:DrawApp(i_ProgramS, str, i==Selected, x, y)
 			if i == Selected then CurrentExec = v end
 		end
@@ -208,7 +208,7 @@ function Agent:Utils()
 			local x,y
 			if i <= SelectableX then y = 2 else y = 6 end
 			x = 2 + (math.fmod(i - 1,SelectableX))*10
-			str = string.gsub(v,"u_","")
+			local str = string.gsub(v,"u_","")
 			self:DrawApp(i_FileS, str, false, x, y)
 			if i == Selected then CurrentExec = v end
 		end
@@ -236,7 +236,7 @@ function Agent:Configs()
 			local x,y
 			if i <= SelectableX then y = 2 else y = 6 end
 			x = 2 + (math.fmod(i - 1,SelectableX))*10
-			str = string.gsub(v,"c_","")
+			local str = string.gsub(v,"c_","")
 			self:DrawApp(i_FileS, str, i==Selected, x, y)
 			if i == Selected then CurrentExec = v end
 		end
@@ -361,7 +361,7 @@ end
 
 function Agent:UpdateKey()
 	while true do
-		event,key = os.pullEvent("key")
+		local event,key = os.pullEvent("key")
 		if key == keys.up or key == keys.w then
 			if Selected > SelectableX then
 				Selected = Selected - SelectableX
@@ -415,8 +415,8 @@ function Agent:DrawBorder()
 	,string.rep("6", #RunningExec))
 
 	term.setCursorPos(34,1)
-	str = textutils.formatTime(os.time(),true)
-	curX = 34
+	local str = textutils.formatTime(os.time(),true)
+	local curX = 34
 	for i = 1, #str do
 		term.setCursorPos(curX,1)
 		term.blit(string.sub(str, i, i), "f", "0")

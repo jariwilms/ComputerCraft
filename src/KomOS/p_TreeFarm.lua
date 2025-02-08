@@ -2,6 +2,7 @@
 
 --Includes
 local TreeConfig  = require("u_Config")
+local Inv = require("u_Inv")
 
 --Global
 
@@ -102,18 +103,7 @@ function CanStart()
 		return false
 	end
 	
-	fullinv = true
-	for i=1,14 do
-		if turtle.getItemCount(i) < 64 then
-			dataInv = turtle.getItemDetail(i)
-			if dataInv ~= nil and string.match(dataInv.name, "stick") then
-				turtle.select(i)
-				turtle.drop()
-			end
-			fullinv = false
-		end
-	end
-	if fullinv then
+	if Inv.IsFull() then
 		term.setCursorPos(1,1)
 		term.clear()
 		print("Inventory full")
@@ -166,7 +156,7 @@ function RunTreeFarm()
 end
 
 function Stop()
-    event,key = os.pullEvent("key")
+    local event,key = os.pullEvent("key")
     return
 end
 
