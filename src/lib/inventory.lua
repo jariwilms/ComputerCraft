@@ -4,21 +4,28 @@ local item   = require("/lib/item")
 
 
 ---Represents the internal state of a turtle's inventory
----Indices are valid in the range [1, config.InventorySlots]
----Methods are never dependent on the selected slot
+---Indices are valid in the range [1, 16]
+---Methods will always restore the previously selected index
 ---@class inventory
-local inventory = {}
-
----Creates a new inventory
----@return inventory
-function inventory:new()
-    setmetatable(self, inventory)
-
-    self.__index = self
-    self:update_all()
-
-    return self
-end
+local inventory =
+{
+    [ 1] = item.empty(),
+    [ 2] = item.empty(),
+    [ 3] = item.empty(),
+    [ 4] = item.empty(),
+    [ 5] = item.empty(),
+    [ 6] = item.empty(),
+    [ 7] = item.empty(),
+    [ 8] = item.empty(),
+    [ 9] = item.empty(),
+    [10] = item.empty(),
+    [11] = item.empty(),
+    [12] = item.empty(),
+    [13] = item.empty(),
+    [14] = item.empty(),
+    [15] = item.empty(),
+    [16] = item.empty(),
+}
 
 ---Returns true if the given index is valid
 ---@param index integer
@@ -207,6 +214,20 @@ function inventory:defragment(offset)
         end
     end
 end
+
+
+
+setmetatable(inventory,
+{
+    __tostring = function(self)
+        local str = ""
+        for index, value in ipairs(self) do
+            str = str .. "[" .. index .. "] ".. tostring(value) .. "\n"
+        end
+
+        return str
+    end
+})
 
 
 
