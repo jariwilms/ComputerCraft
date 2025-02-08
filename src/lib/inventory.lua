@@ -115,16 +115,16 @@ function inventory.swap(left, right)
 
     local empty = item.empty()
 
-    if     inventory[left] .identifier ~= empty.identifier and inventory[right].identifier ~= empty.identifier then
+    if     inventory[left].identifier ~= empty.identifier and inventory[right].identifier ~= empty.identifier then
         local placeholder = inventory.find(item.empty().identifier)
         if not placeholder then return false end
 
         if not inventory.transfer(left,        placeholder) or
            not inventory.transfer(right,       left)        or
            not inventory.transfer(placeholder, right)       then return false end
-    elseif inventory[left] .identifier ~= empty.identifier and inventory[right].identifier == empty.identifier then
+    elseif inventory[left].identifier ~= empty.identifier and inventory[right].identifier == empty.identifier then
         return inventory.transfer(left, right)
-    elseif inventory[right].identifier == empty.identifier and inventory[left] .identifier ~= empty.identifier then
+    elseif inventory[left].identifier == empty.identifier and inventory[right].identifier ~= empty.identifier then
         return inventory.transfer(right, left)
     end
 
