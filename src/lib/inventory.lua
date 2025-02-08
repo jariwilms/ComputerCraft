@@ -202,7 +202,7 @@ end
 
 ---Initializes the inventory
 ---@return inventory
-local function init()
+local function __()
     for i = 1, config.InventorySlots, 1 do
         inventory.update(i)
     end
@@ -227,7 +227,21 @@ local function init()
         end,
     })
 
-    return inventory
+    local proxy = {}
+    local meta =
+    {
+        __index    = inventory,
+        __newindex = function (t, k, v)
+            local n = tonumber(k)
+            if not n or not inventory.in_bounds(n) then error("Updating non-item keys is not allowed!", 2) end
+
+            t[k] = v
+        end,
+    }
+
+    setmetatable(proxy, meta)
+
+    return proxy
 end
 
-return init()
+return __()
