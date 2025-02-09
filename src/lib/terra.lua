@@ -10,6 +10,13 @@ local terra =
         Up       = 3,
         Down     = 4,
     }),
+    ---@enum terra.Direction
+    Direction = meta.read_only
+    ({
+        Forward = 1,
+        Up      = 2,
+        Down    = 3,
+    }),
     ---@enum terra.Orientation
     Orientation  = meta.read_only
     ({
@@ -37,13 +44,6 @@ local terra =
         East  = 2,
         South = 3,
         West  = 4,
-    }),
-    ---@enum terra.Direction
-    Direction = meta.read_only
-    ({
-        Forward = 1,
-        Up      = 2,
-        Down    = 3,
     }),
 }
 
@@ -162,9 +162,9 @@ function terra.dig(direction)
     local success, data = terra.inspect(direction)
 
     if success then
-        if     direction == terra.Direction.Front then turtle.dig()
-        elseif direction == terra.Direction.Up    then turtle.digUp()
-        elseif direction == terra.Direction.Down  then turtle.digDown()
+        if     direction == terra.Direction.Forward then turtle.dig()
+        elseif direction == terra.Direction.Up      then turtle.digUp()
+        elseif direction == terra.Direction.Down    then turtle.digDown()
         else   error("Invalid Direction!")
         end
 
