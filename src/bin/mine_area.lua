@@ -1,27 +1,34 @@
-local config  = require("/cfg/mine_area")
-local terra   = require("/lib/terra")
-local mathext = require("/lib/math_ext")
-
-local argv = {...}
-local argc = #argv
+local config    = require("/cfg/mine_area")
+local mathext   = require("/lib/math_ext")
+local terra     = require("/lib/terra")
+local inventory = require("/lib/inventory")
+local item      = require("/lib/item")
 
 
 
 local function mine_area(dimensions)
-    local position    = vector.new()
-    local orientation = terra.Orientation.new()
-    local rotation    = terra.Rotation.Right
+    local position              = vector.new()
+    local orientation           = terra.Orientation.new()
+    local rotation              = terra.Rotation.Right
+
+    local verticalMoveDirection = terra.Movement.Up
+    local verticalDigDirection  = terra.Movement.Up
 
 
 
     if dimensions.z < 0 then
-        terra.turn(terra.Rotation.Left)
-        terra.turn(terra.Rotation.Left)
+        terra.rotate(terra.Rotation.Left)
+        terra.rotate(terra.Rotation.Left)
 
         dimensions.x = -dimensions.x
     end
-    if dimensions.x < 0 then rotation = terra.Rotation.Left                  end
-    if dimensions.y < 0 then error("Y dimensions < 0 are not yet supported") end
+    if dimensions.x < 0 then
+        rotation = terra.Rotation.Left
+    end
+    if dimensions.y < 0 then
+        verticalMoveDirection = terra.Movement.Down
+        verticalDigDirection  = terra.Movement.Down
+    end
 
     dimensions.x = math.abs(dimensions.x)
     dimensions.y = math.abs(dimensions.y)
@@ -29,21 +36,24 @@ local function mine_area(dimensions)
 
 
 
-    terra.dig()
-    terra.move(terra.Direction.Forward)
+    terra.dig(terra.Direction.Forward)
+    terra.move(terra.Movement.Forward)
 
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
             for _ = 1, dimensions.z - 1 do
-                terra.dig(terra.DigDirection.Front)
-                terra.move(terra.Direction.Forward, position, orientation)
+                local block = terra.dig(terra.Direction.Forward)
+
+
+
+                terra.move(terra.Movement.Forward, position, orientation)
             end
 
             if _ < dimensions.x then
-                terra.turn(rotation, orientation)
-                terra.dig(terra.DigDirection.Front)
-                terra.move(terra.Direction.Forward, position, orientation)
-                terra.turn(rotation, orientation)
+                terra.rotate(rotation, orientation)
+                terra.dig(terra.Direction.Forward)
+                terra.move(terra.Movement.Forward, position, orientation)
+                terra.rotate(rotation, orientation)
 
                 if     rotation == terra.Rotation.Left  then rotation = terra.Rotation.Right
                 elseif rotation == terra.Rotation.Right then rotation = terra.Rotation.Left
@@ -52,10 +62,10 @@ local function mine_area(dimensions)
         end
 
         if _ < dimensions.y then
-            terra.dig(terra.DigDirection.Up)
-            terra.move(terra.Direction.Up, position, orientation)
-            terra.turn(terra.Rotation.Left, orientation)
-            terra.turn(terra.Rotation.Left, orientation)
+            terra.dig(verticalDigDirection)
+            terra.move(verticalMoveDirection, position, orientation)
+            terra.rotate(terra.Rotation.Left, orientation)
+            terra.rotate(terra.Rotation.Left, orientation)
         end
     end
 end
@@ -79,7 +89,7 @@ local function refuel(amount)
     end
 end
 
-local function main()
+local function main(argv, argc)
     term.clear()
     term.setCursorPos(1, 1)
 
@@ -138,4 +148,9 @@ local function main()
     io.write("Excavation complete.\n")
 end
 
-main()
+
+
+local argv = {...}
+local argc = #argv
+
+main(argv, argc)
