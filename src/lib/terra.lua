@@ -67,7 +67,7 @@ function terra.move(movement, position, orientation)
     position    = position    or vector.new()
     orientation = orientation or terra.Orientation.new()
 
-    if     movement == terra.Direction.Forward  then
+    if     movement == terra.Movement.Forward  then
         if turtle.forward() then
             if orientation[0] == terra.Orientation.Forward  then position.z = position.z + 1 end
             if orientation[0] == terra.Orientation.Left     then position.x = position.x - 1 end
@@ -76,7 +76,7 @@ function terra.move(movement, position, orientation)
 
             return true
         end
-    elseif movement == terra.Direction.Backward then
+    elseif movement == terra.Movement.Backward then
         if turtle.back() then
             if orientation[0] == terra.Orientation.Forward  then position.z = position.z - 1 end
             if orientation[0] == terra.Orientation.Left     then position.x = position.x + 1 end
@@ -85,19 +85,19 @@ function terra.move(movement, position, orientation)
 
             return true
         end
-    elseif movement == terra.Direction.Up       then
+    elseif movement == terra.Movement.Up       then
         if turtle.up() then
             position.y = position.y + 1
 
             return true
         end
-    elseif movement == terra.Direction.Down     then
+    elseif movement == terra.Movement.Down     then
         if turtle.down() then
             position.y = position.y - 1
 
             return true
         end
-    else   error("Invalid Direction!")
+    else   error("Invalid Movement!")
     end
 
     return false

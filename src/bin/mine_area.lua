@@ -12,7 +12,7 @@ local function mine_area(dimensions)
     local rotation              = terra.Rotation.Right
 
     local verticalMoveDirection = terra.Movement.Up
-    local verticalDigDirection  = terra.Movement.Up
+    local verticalDigDirection  = terra.Direction.Up
 
 
 
@@ -27,7 +27,7 @@ local function mine_area(dimensions)
     end
     if dimensions.y < 0 then
         verticalMoveDirection = terra.Movement.Down
-        verticalDigDirection  = terra.Movement.Down
+        verticalDigDirection  = terra.Direction.Down
     end
 
     dimensions.x = math.abs(dimensions.x)
