@@ -42,7 +42,16 @@ local function mine_area(dimensions)
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
             for _ = 1, dimensions.z - 1 do
-                terra.dig(terra.Direction.Forward)
+                local success, data = terra.inspect(terra.Direction.Forward)
+
+                if success then
+                    success = inventory.select_free_or_empty(data.name)
+
+                    print("Space left in inventory? ", success)
+
+                    terra.dig(terra.Direction.Forward)
+                end
+
                 terra.move(terra.Movement.Forward, position, orientation)
             end
 
