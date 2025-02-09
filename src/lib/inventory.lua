@@ -43,6 +43,13 @@ function inventory.at(index)
     return item.copy(inventory[index])
 end
 
+function inventory.select(index)
+    if not inventory.in_bounds(index) then error("Index out of range!", 2) end
+
+    turtle.select(index)
+    inventory.selected = index
+end
+
 ---Returns the first index of an item with the given identifier
 ---@param  identifier string
 ---@return            integer?
@@ -207,16 +214,26 @@ local function __()
         inventory.update(i)
     end
 
+    inventory.selected = turtle.getSelectedSlot()
+
     setmetatable(inventory,
     {
         __metatable = {},
-        __newindex  = function (t, k, v)
-            local n = tonumber(k)
+        __newindex  = function (table, key, value)
+            local kn = tonumber(key)
 
-            if not n or not inventory.in_bounds(n) then error("Updating non-item keys is not allowed!", 2) end
-            if getmetatable(t) ~= item             then error("Table must be of type 'item'!") end
+            if     key == "selected" then
+                local vn = tonumber(value)
 
-            t[k] = v
+                if vn and inventory.in_bounds(vn) then inventory.selected = vn
+                else                                   error("Selected index must be a number!")
+                end
+            elseif kn and inventory.in_bounds(kn) then
+                if getmetatable(value) == item then table[key] = value
+                else                                error("Inventory index keys must be of type 'Item'!")
+                end
+            else   error("Invalid key and/or value!\nKey: " .. key .. "\nValue: " .. value, 2)
+            end
         end,
     })
 

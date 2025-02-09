@@ -3,7 +3,7 @@ local meta = require("/lib/meta")
 local terra =
 {
     ---@enum terra.Movement
-    Movement    = meta.read_only
+    Movement     = meta.read_only
     ({
         Forward  = 1,
         Backward = 2,
@@ -11,7 +11,7 @@ local terra =
         Down     = 4,
     }),
     ---@enum terra.Direction
-    Direction = meta.read_only
+    Direction    = meta.read_only
     ({
         Forward = 1,
         Up      = 2,
@@ -47,9 +47,20 @@ local terra =
     }),
 }
 
+---Detects a block in a given direction
+---@param  direction terra.Direction
+---@return           boolean
+function terra.detect(direction)
+    if     direction == terra.Direction.Forward then return turtle.detect()
+    elseif direction == terra.Direction.Up      then return turtle.detectUp()
+    elseif direction == terra.Direction.Down    then return turtle.detectDown()
+    else   error("Invalid Direction!")
+    end
+end
+
 ---Inspects a block in a given direction
 ---@param   direction terra.Direction
----@returns           boolean, table/string
+---@returns           boolean, table|string
 function terra.inspect(direction)
     if     direction == terra.Direction.Forward then return turtle.inspect()
     elseif direction == terra.Direction.Up      then return turtle.inspectUp()
@@ -111,7 +122,6 @@ function terra.force_move(movement, position, orientation)
     repeat until terra.move(movement, position, orientation)
 end
 
----
 ---@param  rotation     terra.Rotation
 ---@param  orientation? terra.Orientation ---Reference
 ---@return              boolean
@@ -157,21 +167,17 @@ end
 
 ---Digs in a given direction if a block is detected
 ---@param  direction terra.Direction
----@return           table
+---@return           boolean
 function terra.dig(direction)
-    local success, data = terra.inspect(direction)
-
-    if success then
-        if     direction == terra.Direction.Forward then turtle.dig()
-        elseif direction == terra.Direction.Up      then turtle.digUp()
-        elseif direction == terra.Direction.Down    then turtle.digDown()
+    if terra.detect(direction) then
+        if     direction == terra.Direction.Forward then return turtle.dig()
+        elseif direction == terra.Direction.Up      then return turtle.digUp()
+        elseif direction == terra.Direction.Down    then return turtle.digDown()
         else   error("Invalid Direction!")
         end
-
-        return data
     end
 
-    return {}
+    return false
 end
 
 ---@param direction terra.Direction

@@ -42,10 +42,7 @@ local function mine_area(dimensions)
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
             for _ = 1, dimensions.z - 1 do
-                local block = terra.dig(terra.Direction.Forward)
-
-
-
+                terra.dig(terra.Direction.Forward)
                 terra.move(terra.Movement.Forward, position, orientation)
             end
 
