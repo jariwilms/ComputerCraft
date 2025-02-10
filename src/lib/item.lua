@@ -6,7 +6,6 @@
 ---@field damage     number
 local item = {}
 
----Creates a new item
 ---@param identifier string
 ---@param count      integer
 ---@param limit      integer
@@ -16,14 +15,12 @@ function item.new(identifier, count, limit, damage)
     return setmetatable({ identifier = identifier, count = count, limit = limit, damage = damage or 0 }, getmetatable(item))
 end
 
----Copies an item
 ---@param  other item
 ---@return       item
 function item.copy(other)
     return item.new(other.identifier, other.count, other.limit, other.damage)
 end
 
----Creates an empty item
 ---@return item
 function item.empty()
     return item.new("cc:none", 0, 0, 0)
