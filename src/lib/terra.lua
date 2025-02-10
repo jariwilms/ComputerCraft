@@ -47,7 +47,6 @@ local terra =
     }),
 }
 
----Detects a block in a given direction
 ---@param  direction terra.Direction
 ---@return           boolean
 function terra.detect(direction)
@@ -58,7 +57,6 @@ function terra.detect(direction)
     end
 end
 
----Inspects a block in a given direction
 ---@param   direction terra.Direction
 ---@returns           boolean, table|string
 function terra.inspect(direction)
@@ -69,7 +67,6 @@ function terra.inspect(direction)
     end
 end
 
----Move in a certain direction
 ---@param  movement     terra.Movement
 ---@param  position?    table
 ---@param  orientation? terra.Orientation ---Reference
@@ -114,7 +111,6 @@ function terra.move(movement, position, orientation)
     return false
 end
 
----Force move in a certain direction
 ---@param  movement     terra.Movement
 ---@param  position?    table
 ---@param  orientation? terra.Orientation ---Reference
@@ -165,7 +161,6 @@ function terra.force_rotate(rotation, orientation)
     repeat until terra.rotate(rotation, orientation)
 end
 
----Digs in a given direction if a block is detected
 ---@param  direction terra.Direction
 ---@return           boolean
 function terra.dig(direction)
