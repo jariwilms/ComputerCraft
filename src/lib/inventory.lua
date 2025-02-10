@@ -93,7 +93,9 @@ function inventory.transfer(from, to, amount)
     if fromItem.identifier ~= toItem.identifier            then return false end
     if fromItem.count == 0 or toItem.count == toItem.limit then return false end
 
-    amount = math.min(math.max(amount or 0, 0), fromItem.count)
+    if amount and amount > 0 then amount = math.min(amount, fromItem.count)
+    else                          amount = fromItem.count
+    end
 
     turtle.select(from)
     turtle.transferTo(to, amount)
