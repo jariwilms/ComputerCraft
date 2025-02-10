@@ -9,13 +9,11 @@ local item   = require("/lib/item")
 ---@class inventory
 local inventory = {}
 
----Returns true if the given index is valid
 ---@param index integer
 function inventory.in_bounds(index)
     return index >= 1 and index <= config.InventorySlots
 end
 
----Updates the inventory slot at index or selected if no index is given
 ---@param index integer
 function inventory.update(index)
     if not inventory.in_bounds(index) then error("Index out of range!", 2) end
@@ -27,14 +25,12 @@ function inventory.update(index)
     end
 end
 
----Updates all inventory slots
 function inventory.update_all()
     for index, _ in ipairs(inventory) do
         inventory.update(index)
     end
 end
 
----Returns the item at the given index
 ---@param  index integer
 ---@return       item
 function inventory.at(index)
@@ -44,13 +40,24 @@ function inventory.at(index)
 end
 
 function inventory.select(index)
-    if not inventory.in_bounds(index) then error("Index out of range!", 2) end
+    if not inventory.in_bounds(index)    then error("Index out of range!", 2) end
+    if index == inventory.selected.index then return end
 
     turtle.select(index)
     inventory.selected = index
+
+    return index
 end
 
----Returns the first index of an item with the given identifier
+function inventory.select_free_or_empty(identifier)
+    local predicate = function(_) return _.identifier == identifier and _.count < _.limit end
+    local slot      = inventory.find_if(predicate) or inventory.find(item.empty().identifier)
+
+    if slot then return inventory.select(slot)
+    else         return nil
+    end
+end
+
 ---@param  identifier string
 ---@return            integer?
 function inventory.find(identifier)
@@ -61,7 +68,16 @@ function inventory.find(identifier)
     return nil
 end
 
----Returns a table with indices of items with the given identifier
+---@param  predicate function(_: item): boolean
+---@return           integer?
+function inventory.find_if(predicate)
+    for index, value in ipairs(inventory) do
+        if predicate(value) then return index end
+    end
+
+    return nil
+end
+
 ---@param  identifier string
 ---@return            table
 function inventory.find_all(identifier)
@@ -74,7 +90,6 @@ function inventory.find_all(identifier)
     return list
 end
 
----Transfer an amount of items from one slot to another
 ---@param  from    integer
 ---@param  to      integer
 ---@param  amount? integer
@@ -93,7 +108,6 @@ function inventory.transfer(from, to, amount)
     return false
 end
 
----Swap two item slots
 ---@param  left  integer
 ---@param  right integer
 ---@return       boolean
@@ -121,7 +135,6 @@ function inventory.swap(left, right)
     return true
 end
 
----Drops an amount of items from the given index
 ---@param index   integer
 ---@param amount? integer
 function inventory.drop(index, amount)
@@ -134,7 +147,6 @@ function inventory.drop(index, amount)
     inventory.update(index)
 end
 
----Drops all items
 function inventory.drop_all()
     for index, _ in ipairs(inventory) do
         turtle.select(index)
@@ -144,7 +156,6 @@ function inventory.drop_all()
     inventory.update_all()
 end
 
----Returns true if all slots are full
 ---@return boolean
 function inventory.full()
     local empty = item.empty()
@@ -156,7 +167,6 @@ function inventory.full()
     return true
 end
 
----Returns true if all slots are empty
 ---@return boolean
 function inventory.empty()
     local empty = item.empty()
@@ -168,7 +178,6 @@ function inventory.empty()
     return false
 end
 
----Groups blocks of the same type that have not reached their maximum stack size
 ---@param offset integer
 function inventory.defragment(offset)
     error("Not implemented!")
@@ -207,7 +216,6 @@ end
 
 
 
----Initializes the inventory
 ---@return inventory
 local function __()
     for i = 1, config.InventorySlots, 1 do
