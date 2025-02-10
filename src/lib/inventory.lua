@@ -86,16 +86,20 @@ end
 ---@param  amount? integer
 ---@return         boolean
 function inventory.transfer(from, to, amount)
+    local fromItem = inventory.items[from]
+    local toItem   = inventory.items[to]
+
+    if fromItem.identifier ~= toItem.identifier            then return false end
+    if fromItem.count == 0 or toItem.count == toItem.limit then return false end
+
+    amount = math.min(math.max(amount or 0, 0), fromItem.count)
+
     turtle.select(from)
+    turtle.transferTo(to, amount)
+    inventory.update(from)
+    inventory.update(to)
 
-    if turtle.transferTo(to, amount) then
-        inventory.update(from)
-        inventory.update(to)
-
-        return true
-    end
-
-    return false
+    return true
 end
 
 ---@param  left  integer
@@ -109,10 +113,10 @@ function inventory.swap(left, right)
     if     inventory.items[left].identifier ~= eid and inventory.items[right].identifier ~= eid then
         local placeholder = inventory.find(eid)
 
-        if not placeholder                                  or
-           not inventory.transfer(left,        placeholder) or
-           not inventory.transfer(right,       left)        or
-           not inventory.transfer(placeholder, right)       then return false end
+        return placeholder ~= nil                           and
+               inventory.transfer(left,        placeholder) and
+               inventory.transfer(right,       left)        and
+               inventory.transfer(placeholder, right)
     elseif inventory.items[left].identifier ~= eid and inventory.items[right].identifier == eid then
         return inventory.transfer(left, right)
     elseif inventory.items[left].identifier == eid and inventory.items[right].identifier ~= eid then
