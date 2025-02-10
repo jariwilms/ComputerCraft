@@ -19,6 +19,11 @@ local modem = peripheral.wrap("left")
 local LastPackageSent = "00:00"
 local LastPackageReceived = "00:00"
 
+local DefaultTerm = term.current()
+local XTermSize,YTermSize = term.getSize()
+local BorderWindow = window.create(term.current(), 1, 1, XTermSize, 1)
+local AppWindow = window.create(term.current(), 1, 2, XTermSize, YTermSize-1)
+
 --Images
 
 local i_Program ={".------.",
@@ -108,6 +113,7 @@ end
 function Agent:DrawApp(img,name,bselected,x,y)
 	Sprite.DrawImage(x,y,img)
 	
+	
 	local imagesizeX, imagesizey = Sprite.GetSize(img)
 	local len = #name
 	local xtextpos = (x+imagesizey-len/2)
@@ -134,16 +140,16 @@ function Agent:MainMenu()
 		MaxSelectable = 9
 		
 		if Selected < 7 then
-			self:DrawApp(i_tinfo, "Stats", Selected==1, 5, 3)
-			self:DrawApp(i_folder, "Programs", Selected==2, 16, 3) 
-			self:DrawApp(i_folder, "Config", Selected==3 , 27, 3)
-			self:DrawApp(i_folder, "Utils", Selected==4, 5, 9)
-			self:DrawApp(i_signal, "Connection", Selected==5, 16, 9)
-			self:DrawApp(i_exit, "Exit", Selected==6, 27, 9)
+			self:DrawApp(i_tinfo, 	"Stats", 		Selected==1, 5,	 2)
+			self:DrawApp(i_folder, 	"Programs", 	Selected==2, 16, 2)
+			self:DrawApp(i_folder, 	"Config", 		Selected==3, 27, 2)
+			self:DrawApp(i_folder, 	"Utils", 		Selected==4, 5,	 8)
+			self:DrawApp(i_signal, 	"Connection", 	Selected==5, 16, 8)
+			self:DrawApp(i_exit, 	"Exit", 		Selected==6, 27, 8)
 		else
-			self:DrawApp(i_Program, "Update", Selected==7, 5, 3)
-			self:DrawApp(i_folder, "Setups", Selected==8, 16, 3)
-			self:DrawApp(i_exit, "Exit", Selected==9, 27, 3)
+			self:DrawApp(i_Program, "Update", 		Selected==7, 5,	 2)
+			self:DrawApp(i_folder, 	"Setups", 		Selected==8, 16, 2)
+			self:DrawApp(i_exit, 	"Exit", 		Selected==9, 27, 2)
 		end
 end
 
@@ -403,6 +409,7 @@ end
 --Core
 
 function Agent:DrawBorder()
+	term.redirect(BorderWindow)
 	term.setCursorPos(1,1)
 	
 	term.blit("KomOS Agent                            "
@@ -422,6 +429,7 @@ function Agent:DrawBorder()
 		term.blit(string.sub(str, i, i), "f", "0")
 		curX = curX+1
 	end
+	term.redirect(AppWindow)
 end
 
 function Agent:DrawWindow()
@@ -541,6 +549,7 @@ function OsHeading()
 	end
 end
 
+term.redirect(AppWindow)
 parallel.waitForAny(Loop, Keys, Network, OsHeading)
 term.clear()
 term.setCursorPos(1,2)
