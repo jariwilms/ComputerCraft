@@ -221,9 +221,6 @@ local function __()
 
     setmetatable(inventory.items,
     {
-        __index = function(self, k)
-            error("Index out of range!", 2)
-        end,
         __newindex = function(self, k, v)
             if getmetatable(v) ~= getmetatable(item) then error("Attempting to set a non-item value!", 2) end
 
