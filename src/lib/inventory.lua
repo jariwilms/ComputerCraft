@@ -40,7 +40,8 @@ function inventory.at(index)
 end
 
 function inventory.select(index)
-    if not inventory.in_bounds(index) then error("Index out of range!", 2) end
+    if not inventory.in_bounds(index)    then error("Index out of range!", 2) end
+    if index == inventory.selected.index then return end
 
     turtle.select(index)
     inventory.selected = index
