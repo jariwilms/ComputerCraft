@@ -19,7 +19,6 @@ function Logger.Init(Logfile,ClearFiles)
     Logger.Logfile = Logfile
     if ClearFiles then
         Logger.ClearLog()
-        Logger.ClearNil()
     end
 end
 

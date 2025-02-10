@@ -98,7 +98,7 @@ function InstallAllReq()
 	
 	--Create startup
 	SetupStartup()
-	sleep(1)
+	sleep(5)
 end
 
 function InstallAllReqParallel()
@@ -123,7 +123,7 @@ function InstallAllReqParallel()
 	
 	--Create startup
 	SetupStartup()
-	sleep(1)
+	sleep(5)
 end
 
 function ShowStatus()
