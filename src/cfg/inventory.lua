@@ -1,6 +1,6 @@
 local config =
 {
-    InventorySlots = 16,
+    TurtleInventorySlots = 16,
 }
 
 return config

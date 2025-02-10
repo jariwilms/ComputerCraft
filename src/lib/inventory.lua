@@ -10,23 +10,16 @@ local item   = require("/lib/item")
 local inventory = {}
 
 ---@param index integer
-function inventory.in_bounds(index)
-    return index >= 1 and index <= config.InventorySlots
-end
-
----@param index integer
 function inventory.update(index)
-    if not inventory.in_bounds(index) then error("Index out of range!", 2) end
-
     local data = turtle.getItemDetail(index)
 
-    if data then inventory[index] = item.new(data.name, data.count, data.count + turtle.getItemSpace(index), data.damage)
-    else         inventory[index] = item.empty()
+    if data then inventory.items[index] = item.new(data.name, data.count, data.count + turtle.getItemSpace(index), data.damage)
+    else         inventory.items[index] = item.empty()
     end
 end
 
 function inventory.update_all()
-    for index, _ in ipairs(inventory) do
+    for index, _ in ipairs(inventory.items) do
         inventory.update(index)
     end
 end
@@ -34,34 +27,32 @@ end
 ---@param  index integer
 ---@return       item
 function inventory.at(index)
-    if not inventory.in_bounds(index) then error("Index out of range!", 2) end
-
-    return item.copy(inventory[index])
+    return item.copy(inventory.items[index])
 end
 
+---@param index integer
 function inventory.select(index)
-    if not inventory.in_bounds(index)    then error("Index out of range!", 2) end
-    if index == inventory.selected.index then return end
-
-    turtle.select(index)
-    inventory.selected = index
-
-    return index
+    if inventory.items[index] and index ~= inventory.selected then
+        turtle.select(index)
+        inventory.selected = index
+    end
 end
 
+---@param identifier string
+---@return           integer|nil
 function inventory.select_free_or_empty(identifier)
     local predicate = function(_) return _.identifier == identifier and _.count < _.limit end
     local slot      = inventory.find_if(predicate) or inventory.find(item.empty().identifier)
 
-    if slot then return inventory.select(slot)
-    else         return nil
+    if slot then inventory.select(slot) return slot
+    else                                return nil
     end
 end
 
 ---@param  identifier string
 ---@return            integer?
 function inventory.find(identifier)
-    for index, value in ipairs(inventory) do
+    for index, value in ipairs(inventory.items) do
         if identifier == value.identifier then return index end
     end
 
@@ -71,7 +62,7 @@ end
 ---@param  predicate function(_: item): boolean
 ---@return           integer?
 function inventory.find_if(predicate)
-    for index, value in ipairs(inventory) do
+    for index, value in ipairs(inventory.items) do
         if predicate(value) then return index end
     end
 
@@ -83,7 +74,7 @@ end
 function inventory.find_all(identifier)
     local list = {}
 
-    for index, value in ipairs(inventory) do
+    for index, value in ipairs(inventory.items) do
         if identifier == value.identifier then list[index] = item.copy(value) end
     end
 
@@ -95,10 +86,9 @@ end
 ---@param  amount? integer
 ---@return         boolean
 function inventory.transfer(from, to, amount)
-    if not inventory.in_bounds(from) then error("Index out of range!", 2) end
-    if not inventory.in_bounds(to)   then error("Index out of range!", 2) end
+    turtle.select(from)
 
-    if turtle.select(from) and turtle.transferTo(to, amount) then
+    if turtle.transferTo(to, amount) then
         inventory.update(from)
         inventory.update(to)
 
@@ -112,23 +102,20 @@ end
 ---@param  right integer
 ---@return       boolean
 function inventory.swap(left, right)
-    if not inventory.in_bounds(left)  then error("Index out of range!", 2) end
-    if not inventory.in_bounds(right) then error("Index out of range!", 2) end
+    if left == right then return true end
 
-    if left == right then return true  end
+    local eid = item.empty().identifier
 
-    local empty = item.empty()
+    if     inventory.items[left].identifier ~= eid and inventory.items[right].identifier ~= eid then
+        local placeholder = inventory.find(eid)
 
-    if     inventory[left].identifier ~= empty.identifier and inventory[right].identifier ~= empty.identifier then
-        local placeholder = inventory.find(item.empty().identifier)
-        if not placeholder then return false end
-
-        if not inventory.transfer(left,        placeholder) or
+        if not placeholder                                  or
+           not inventory.transfer(left,        placeholder) or
            not inventory.transfer(right,       left)        or
            not inventory.transfer(placeholder, right)       then return false end
-    elseif inventory[left].identifier ~= empty.identifier and inventory[right].identifier == empty.identifier then
+    elseif inventory.items[left].identifier ~= eid and inventory.items[right].identifier == eid then
         return inventory.transfer(left, right)
-    elseif inventory[left].identifier == empty.identifier and inventory[right].identifier ~= empty.identifier then
+    elseif inventory.items[left].identifier == eid and inventory.items[right].identifier ~= eid then
         return inventory.transfer(right, left)
     end
 
@@ -138,29 +125,26 @@ end
 ---@param index   integer
 ---@param amount? integer
 function inventory.drop(index, amount)
-    if not inventory.in_bounds(index) then error("Index out of range!", 2) end
-    if not amount or amount < 1       then return end
+    if not amount or amount < 0 or amount > 64 then amount = inventory.items[index].count end
 
     turtle.select(index)
-    turtle.drop(math.min(amount, inventory[index].count))
+    turtle.drop(amount)
 
     inventory.update(index)
 end
 
 function inventory.drop_all()
-    for index, _ in ipairs(inventory) do
+    for index, _ in ipairs(inventory.items) do
         turtle.select(index)
         turtle.drop()
     end
-
-    inventory.update_all()
 end
 
 ---@return boolean
 function inventory.full()
     local empty = item.empty()
 
-    for _, value in ipairs(inventory) do
+    for _, value in ipairs(inventory.items) do
         if value == empty then return false end
     end
 
@@ -171,7 +155,7 @@ end
 function inventory.empty()
     local empty = item.empty()
 
-    for _, value in ipairs(inventory) do
+    for _, value in ipairs(inventory.items) do
         if value ~= empty then return true end
     end
 
@@ -182,67 +166,59 @@ end
 function inventory.defragment(offset)
     error("Not implemented!")
 
-    local startIndex = 1
-    local endIndex   = 16
+    -- local startIndex = 1
+    -- local endIndex   = 16
 
-    if offset > 0 then startIndex = startIndex + offset end
-    if offset < 0 then endIndex   = endIndex   - offset end
+    -- if offset > 0 then startIndex = startIndex + offset end
+    -- if offset < 0 then endIndex   = endIndex   - offset end
 
-    if startIndex > 15 or endIndex < 2 then error("Offset out of range") end
-
-
-    local candidates = {}
-    for i = startIndex, endIndex, 1 do
-        local it        = inventory.at(i)
-
-        for key, value in pairs(candidates) do
-            if value == it then
-                while true do --while the amount of space in the current slot is gt 0 and candidate => transfer
-
-                end
-                inventory.transfer(i, key, value.spaceLeft)
-            end
-        end
+    -- if startIndex > 15 or endIndex < 2 then error("Offset out of range") end
 
 
+    -- local candidates = {}
+    -- for i = startIndex, endIndex, 1 do
+    --     local it        = inventory.at(i)
 
-        local spaceLeft = it.limit - it.count
+    --     for key, value in pairs(candidates) do
+    --         if value == it then
+    --             while true do --while the amount of space in the current slot is gt 0 and candidate => transfer
 
-        if spaceLeft then
-            candidates[i] = { identifier = it.identifier, spaceLeft = spaceLeft }
-        end
-    end
+    --             end
+    --             inventory.transfer(i, key, value.spaceLeft)
+    --         end
+    --     end
+
+
+
+    --     local spaceLeft = it.limit - it.count
+
+    --     if spaceLeft then
+    --         candidates[i] = { identifier = it.identifier, spaceLeft = spaceLeft }
+    --     end
+    -- end
 end
 
 
 
 ---@return inventory
 local function __()
-    for i = 1, config.InventorySlots, 1 do
+    inventory.items    = {}
+    inventory.selected = turtle.getSelectedSlot()
+
+    for i = 1, config.TurtleInventorySlots, 1 do
         inventory.update(i)
     end
 
-    inventory.selected = turtle.getSelectedSlot()
-
-    setmetatable(inventory,
+    setmetatable(inventory.items,
     {
-        __metatable = {},
-        __newindex  = function (table, key, value)
-            local kn = tonumber(key)
-
-            if     key == "selected" then
-                local vn = tonumber(value)
-
-                if vn and inventory.in_bounds(vn) then inventory.selected = vn
-                else                                   error("Selected index must be a number!")
-                end
-            elseif kn and inventory.in_bounds(kn) then
-                if getmetatable(value) == item then table[key] = value
-                else                                error("Inventory index keys must be of type 'Item'!")
-                end
-            else   error("Invalid key and/or value!\nKey: " .. key .. "\nValue: " .. value, 2)
-            end
+        __index = function(self, k)
+            error("Index out of range!", 2)
         end,
+        __newindex = function(self, k, v)
+            if getmetatable(v) ~= getmetatable(item) then error("Attempting to set a non-item value!", 2) end
+
+            self[k] = v
+        end
     })
 
     return inventory
