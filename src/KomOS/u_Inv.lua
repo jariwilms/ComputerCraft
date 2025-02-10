@@ -65,7 +65,7 @@ function Inventory.GetAllItem(Item)
 end
 
 function Inventory.GetItemCount(Item)
-    local InvData, Slots = Inventory:GetAllItem(Item)
+    local InvData, Slots = Inventory.GetAllItem(Item)
     local count = 0
     for i=1, Slots do
         count = count +InvData[i][2]
@@ -74,7 +74,7 @@ function Inventory.GetItemCount(Item)
 end
 
 function Inventory.SelectItem(Item)
-    local success, slot, count = Inventory:GetFirstItem(Item)
+    local success, slot, count = Inventory.GetFirstItem(Item)
     if success then
         turtle.select(slot)
     end
@@ -92,7 +92,7 @@ function Inventory.IsFull()
 end
 
 function Inventory.DropAllOfItem(Item)
-    local InvData, Slots = Inventory:GetAllItem(Item)
+    local InvData, Slots = Inventory.GetAllItem(Item)
     local count = 0
     for i=1, Slots do
         turtle.select(InvData[i][1])
@@ -109,7 +109,7 @@ function Inventory.Defrag()
 
             local DefragInProc = true
             while DefragInProc do
-                local InvData, Slots = Inventory:GetAllItem(data["name"])
+                local InvData, Slots = Inventory.GetAllItem(data["name"])
                 print(tostring(Slots).. " number of slots found")
                 if Slots > 1 and data["count"] > 0 then
                     for j=1, Slots do

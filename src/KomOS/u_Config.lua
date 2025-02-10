@@ -17,12 +17,13 @@ setmetatable (ConfigReader, {__call=ConfigReader.__init__})
 
 --functions
 function ConfigReader:setPath(path)
-	if fs.exists(path) then
+	local success = fs.exists(path)
+	if success then
 		self.data.currentPath = path
 	else
 		error("config file does not extist")
 	end
-	return this
+	return success
 end
 
 function ConfigReader:getData (member)
