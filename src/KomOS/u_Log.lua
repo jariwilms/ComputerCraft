@@ -24,30 +24,29 @@ function Logger.Init(Logfile,ClearFiles)
 end
 
 function Logger.Log(Text)
-    io.output(io.open(Logger.Logfile,"a"))
+    local file, errmsg = io.open(Logger.Logfile,"a")
+    io.output(file)
     io.write("\n["..textutils.formatTime(os.time(),true).."][Log] "..Text)
     io.flush()
 end
 
 function Logger.LogWarning(Text)
-    io.output(io.open(Logger.Logfile,"a"))
+    local file, errmsg = io.open(Logger.Logfile,"a")
+    io.output(file)
     io.write("\n["..textutils.formatTime(os.time(),true).."][Warning] "..Text)
     io.flush()
 end
 
 function Logger.LogError(Text)
-    io.output(io.open(Logger.Logfile,"a"))
+    local file, errmsg = io.open(Logger.Logfile,"a")
+    io.output(file)
     io.write("\n["..textutils.formatTime(os.time(),true).."][Error] "..Text)
     io.flush()
 end
 
 function Logger.ClearLog()
-    io.output(io.open(Logger.Logfile,"w+"))
-    io.flush()
-end
-
-function Logger.ClearNil()
-    io.output(io.open(Logger.nilfile,"w+"))
+    local file, errmsg  = io.open(Logger.Logfile,"w+")
+    io.output(file)
     io.flush()
 end
 
@@ -102,10 +101,7 @@ function Logger.Redirect(Func, ...)
     local success, errorMsg = pcall(Func,...)
 	term.redirect(default)
     term.setCursorPos(x,y)
-    if not success then
-        Logger.TermError(errorMsg)
-    end
-    return success
+    return success, errorMsg
 end
 
 return Logger
