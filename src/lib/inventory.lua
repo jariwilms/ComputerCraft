@@ -89,6 +89,7 @@ function inventory.transfer(from, to, amount)
     local fromItem = inventory.items[from]
     local toItem   = inventory.items[to]
 
+    if fromItem.identifier == item.empty().identifier      then return true  end
     if fromItem.identifier ~= toItem.identifier            then return false end
     if fromItem.count == 0 or toItem.count == toItem.limit then return false end
 
