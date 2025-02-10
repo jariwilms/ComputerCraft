@@ -14,7 +14,7 @@ function inventory.update(index)
     local data = turtle.getItemDetail(index)
 
     if data then inventory.items[index] = item.new(data.name, data.count, data.count + turtle.getItemSpace(index), data.damage)
-    else         inventory.items[index] = item.empty()
+    else         inventory.items[index] = item.create_empty()
     end
 end
 
@@ -42,7 +42,7 @@ end
 ---@return           integer|nil
 function inventory.select_free_or_empty(identifier)
     local predicate = function(_) return _.identifier == identifier and _.count < _.limit end
-    local slot      = inventory.find_if(predicate) or inventory.find(item.empty().identifier)
+    local slot      = inventory.find_if(predicate) or inventory.find(item.create_empty().identifier)
 
     if slot then inventory.select(slot) return slot
     else                                return nil
@@ -86,12 +86,15 @@ end
 ---@param  amount? integer
 ---@return         boolean
 function inventory.transfer(from, to, amount)
-    local fromItem = inventory.items[from]
-    local toItem   = inventory.items[to]
+    local fromItem  = inventory.items[from]
+    local toItem    = inventory.items[to]
+    local emptyItem = item.create_empty()
 
-    if fromItem.identifier == item.empty().identifier      then return true  end
-    if fromItem.identifier ~= toItem.identifier            then return false end
-    if fromItem.count == 0 or toItem.count == toItem.limit then return false end
+    if fromItem.identifier == emptyItem.identifier then return true end
+    if toItem.identifier   ~= emptyItem.identifier then
+        if fromItem.identifier ~= toItem.identifier then return false end
+        if toItem.count        == toItem.limit      then return false end
+    end
 
     if amount and amount > 0 then amount = math.min(amount, fromItem.count)
     else                          amount = fromItem.count
@@ -111,7 +114,7 @@ end
 function inventory.swap(left, right)
     if left == right then return true end
 
-    local eid = item.empty().identifier
+    local eid = item.create_empty().identifier
 
     if     inventory.items[left].identifier ~= eid and inventory.items[right].identifier ~= eid then
         local placeholder = inventory.find(eid)
@@ -149,7 +152,7 @@ end
 
 ---@return boolean
 function inventory.full()
-    local empty = item.empty()
+    local empty = item.create_empty()
 
     for _, value in ipairs(inventory.items) do
         if value == empty then return false end
@@ -160,7 +163,7 @@ end
 
 ---@return boolean
 function inventory.empty()
-    local empty = item.empty()
+    local empty = item.create_empty()
 
     for _, value in ipairs(inventory.items) do
         if value ~= empty then return true end

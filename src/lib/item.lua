@@ -22,7 +22,7 @@ function item.copy(other)
 end
 
 ---@return item
-function item.empty()
+function item.create_empty()
     return item.new("cc:none", 0, 0, 0)
 end
 
