@@ -30,7 +30,7 @@ function SpriteRender.DrawImageMonitor(x,y,monitor,image)
 end
 
 function SpriteRender.GetSize(image)
-	local x,y=0
+	local x,y = 0,0
 	local str = image[1]
 	x = #str
 	y = #image
