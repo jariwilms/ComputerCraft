@@ -1,4 +1,11 @@
-os.loadAPI("u_Inv")
+local chests = {peripheral.find("minecraft:chest")}
 
-local inv = u_Inv.Inventory()
-inv:Defrag()
+print(tostring(#chests))
+
+for i, chest in ipairs(chests) do
+    print(peripheral.getType(chest))
+end
+
+local modem = peripheral.find("modem")
+local networkchests = modem.hasTypeRemote("", "minecraft:chest")
+print(textutils.serialise(networkchests))

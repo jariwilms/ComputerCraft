@@ -99,10 +99,13 @@ function Logger.Redirect(Func, ...)
     local x,y = term.getCursorPos()
     local newWindow = window.create(term.current(), 60, 60, 1, 1)
     term.redirect(newWindow)
-	local result = Func(...)
+    local success, errorMsg = pcall(Func,...)
 	term.redirect(default)
     term.setCursorPos(x,y)
-    return result
+    if not success then
+        Logger.TermError(errorMsg)
+    end
+    return success
 end
 
 return Logger

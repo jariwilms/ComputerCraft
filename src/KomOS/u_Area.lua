@@ -82,7 +82,7 @@ end
 function PrintError (str)
 	term.setCursorPos(1,1)
 	term.clear()
-	Print("str")
+	print("str")
 end
 
 return AreaMapper
