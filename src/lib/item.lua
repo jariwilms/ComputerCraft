@@ -4,7 +4,8 @@
 ---@field count      integer
 ---@field limit      integer
 ---@field damage     number
-local item = {}
+local item  = {}
+local empty = {}
 
 ---@param identifier string
 ---@param count      integer
@@ -22,8 +23,8 @@ function item.copy(other)
 end
 
 ---@return item
-function item.create_empty()
-    return item.new("cc:none", 0, 0, 0)
+function item.empty()
+    return empty
 end
 
 
@@ -34,6 +35,8 @@ local function __()
         __eq        = function (left, right) return left.identifier == right.identifier end,
         __tostring  = function (_)           return _.identifier .. ", [" .. _.count .. "/" .. _.limit .. "], " .. _.damage end,
     })
+
+    empty = item.new("cc:none", 0, 0, 0)
 
     return item
 end

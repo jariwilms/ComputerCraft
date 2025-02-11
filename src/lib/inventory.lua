@@ -14,7 +14,7 @@ function inventory.update(index)
     local data = turtle.getItemDetail(index)
 
     if data then inventory.items[index] = item.new(data.name, data.count, data.count + turtle.getItemSpace(index), data.damage)
-    else         inventory.items[index] = item.create_empty()
+    else         inventory.items[index] = item.empty()
     end
 end
 
@@ -49,11 +49,11 @@ function inventory.find(identifier)
     return nil
 end
 
----@param  predicate function(index: integer, value: item) -> boolean
+---@param  predicate function(value: item) -> boolean
 ---@return           integer?
 function inventory.find_if(predicate)
     for index, value in ipairs(inventory.items) do
-        if predicate(index, value) then return index end
+        if predicate(value) then return index end
     end
 
     return nil
@@ -74,9 +74,9 @@ end
 ---@param identifier string
 ---@return           integer|nil
 function inventory.find_free_or_empty(identifier)
-    local predicate = function(index, value) return value.identifier == identifier and value.count < value.limit end
+    local predicate = function(value) return value.identifier == identifier and value.count < value.limit end
 
-    return inventory.find_if(predicate) or inventory.find(item.create_empty().identifier)
+    return inventory.find_if(predicate) or inventory.find(item.empty().identifier)
 end
 
 ---@param  from    integer
@@ -86,10 +86,9 @@ end
 function inventory.transfer(from, to, amount)
     local fromItem  = inventory.items[from]
     local toItem    = inventory.items[to]
-    local emptyItem = item.create_empty()
 
-    if fromItem.identifier == emptyItem.identifier then return true end
-    if toItem.identifier   ~= emptyItem.identifier then
+    if fromItem.identifier == item.empty().identifier then return true end
+    if toItem.identifier   ~= item.empty().identifier then
         if fromItem.identifier ~= toItem.identifier then return false end
         if toItem.count        == toItem.limit      then return false end
     end
@@ -115,18 +114,18 @@ end
 function inventory.swap(left, right)
     if left == right then return true end
 
-    local eid = item.create_empty().identifier
+    local empty = item.empty()
 
-    if     inventory.items[left].identifier ~= eid and inventory.items[right].identifier ~= eid then
-        local placeholder = inventory.find(eid)
+    if     inventory.items[left] ~= empty and inventory.items[right] ~= empty then
+        local placeholder = inventory.find(empty.identifier)
 
         return placeholder ~= nil                           and
                inventory.transfer(left,        placeholder) and
                inventory.transfer(right,       left)        and
                inventory.transfer(placeholder, right)
-    elseif inventory.items[left].identifier ~= eid and inventory.items[right].identifier == eid then
+    elseif inventory.items[left] ~= empty and inventory.items[right] == empty then
         return inventory.transfer(left, right)
-    elseif inventory.items[left].identifier == eid and inventory.items[right].identifier ~= eid then
+    elseif inventory.items[left] == empty and inventory.items[right] ~= empty then
         return inventory.transfer(right, left)
     end
 
@@ -158,7 +157,7 @@ end
 
 ---@return boolean
 function inventory.full()
-    local empty = item.create_empty()
+    local empty = item.empty()
 
     for _, value in ipairs(inventory.items) do
         if value == empty then return false end
@@ -169,7 +168,7 @@ end
 
 ---@return boolean
 function inventory.empty()
-    local empty = item.create_empty()
+    local empty = item.empty()
 
     for _, value in ipairs(inventory.items) do
         if value ~= empty then return true end
@@ -209,7 +208,7 @@ function inventory.defragment(offset)
     --     local spaceLeft = it.limit - it.count
 
     --     if spaceLeft then
-    --         candidates[i] = { identifier = it.identifier, spaceLeft = spaceLeft }
+    --         candidates[i] = { emptyentifier = it.identifier, spaceLeft = spaceLeft }
     --     end
     -- end
 end

@@ -1,4 +1,5 @@
 local config    = require("/cfg/mine_area")
+local fuel      = require("cfg/fuel")
 local mathext   = require("/lib/math_ext")
 local terra     = require("/lib/terra")
 local inventory = require("/lib/inventory")
@@ -13,6 +14,8 @@ local function mine_area(dimensions)
 
     local verticalMoveDirection = terra.Movement.Up
     local verticalDigDirection  = terra.Direction.Up
+
+    local empty = item.create_empty()
 
 
 
@@ -42,22 +45,30 @@ local function mine_area(dimensions)
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
             for _ = 1, dimensions.z - 1 do
-                inventory.select(config.InspectSlot)
-                terra.dig(terra.Direction.Forward)
+                local success, data = terra.inspect(terra.Direction.Forward)
 
-                local empty = item.create_empty()
+                if success then
+                    inventory.select(config.InspectSlot)
+                    terra.dig(terra.Direction.Forward)
+                    inventory.update(config.InspectSlot)
 
-                local stackSlot =
-                    inventory.find_if(function(index, value) return value.identifier == inventory.at(config.InspectSlot).identifier and value.count < value.limit and index ~= config.InspectSlot end) or
-                    inventory.find(empty.identifier)
+                    local index = 0
+                    local stackSlot =
+                        inventory.find_if(function(value)
+                            index = index + 1
+                            return value.identifier == inventory.at(config.InspectSlot).identifier and value.count < value.limit and index ~= config.InspectSlot end
+                        ) or
+                        inventory.find(empty.identifier)
 
-                if stackSlot then
-                    inventory.transfer(config.InspectSlot, stackSlot)
-                    terra.move(terra.Movement.Forward, position, orientation)
-                else
-                    print("Depositing items")
-                    error("Not implemented~")
+                    if stackSlot then
+                        inventory.transfer(config.InspectSlot, stackSlot)
+                    else
+                        print("Depositing items")
+                        error("Not implemented!")
+                    end
                 end
+
+                terra.move(terra.Movement.Forward, position, orientation)
             end
 
             if _ < dimensions.x then
@@ -91,13 +102,21 @@ local function validate_confirmation(response, pass, fail, default)
     return false
 end
 
-local function refuel(amount)
-    io.write("Fuel level inadequate, refueling...\n")
+---@param distance integer
+local function refuel(distance)
+    if distance <= 0 then return end
 
-    turtle.select(1)
-    if turtle.refuel(0) and not turtle.refuel(amount) then error("Not enough fuel")
-    else error("Invalid fuel source!")
-    end
+    inventory.select(config.FuelSlot)
+    if not turtle.refuel(0) then error("Invalid fuel source!") end
+
+    local slot   = inventory.at(config.FuelSlot)
+    local energy = fuel[slot.identifier] or 10
+    local amount = distance / energy
+
+    turtle.refuel(amount)
+end
+local function refuel_until(distance)
+    refuel(turtle.getFuelLevel() - distance)
 end
 
 local function main(argv, argc)
@@ -141,10 +160,9 @@ local function main(argv, argc)
 
     local volume       = math.volume(dimensions)
     local distance     = math.manhattan_distance(dimensions)
-    local maxDistance  = volume + distance + 2 --semi worst case (not calculating deposit runs)
-    local requiredFuel = maxDistance - turtle.getFuelLevel()
+    local maxDistance  = volume + distance + 2 --Worst case not including deposit runs
 
-    if requiredFuel > 0 then refuel(requiredFuel) end
+    refuel_until(maxDistance)
 
 
 
