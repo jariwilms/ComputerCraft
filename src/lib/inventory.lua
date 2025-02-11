@@ -32,21 +32,11 @@ end
 
 ---@param index integer
 function inventory.select(index)
-    if inventory.items[index] and index ~= inventory.selected then
-        turtle.select(index)
-        inventory.selected = index
-    end
-end
+    if index == inventory.selected then return end
+    if not inventory.items[index]  then return end
 
----@param identifier string
----@return           integer|nil
-function inventory.select_free_or_empty(identifier)
-    local predicate = function(_) return _.identifier == identifier and _.count < _.limit end
-    local slot      = inventory.find_if(predicate) or inventory.find(item.create_empty().identifier)
-
-    if slot then inventory.select(slot) return slot
-    else                                return nil
-    end
+    turtle.select(index)
+    inventory.selected = index
 end
 
 ---@param  identifier string
@@ -59,7 +49,7 @@ function inventory.find(identifier)
     return nil
 end
 
----@param  predicate function(_: item) -> boolean
+---@param  predicate function(value: item) -> boolean
 ---@return           integer?
 function inventory.find_if(predicate)
     for index, value in ipairs(inventory.items) do
@@ -81,6 +71,14 @@ function inventory.find_all(identifier)
     return list
 end
 
+---@param identifier string
+---@return           integer|nil
+function inventory.find_free_or_empty(identifier)
+    local predicate = function(_) return _.identifier == identifier and _.count < _.limit end
+
+    return inventory.find_if(predicate) or inventory.find(item.create_empty().identifier)
+end
+
 ---@param  from    integer
 ---@param  to      integer
 ---@param  amount? integer
@@ -96,11 +94,14 @@ function inventory.transfer(from, to, amount)
         if toItem.count        == toItem.limit      then return false end
     end
 
-    if amount and amount > 0 then amount = math.min(amount, fromItem.count)
-    else                          amount = fromItem.count
+    if   amount then
+        if     amount  > 0 then amount = math.min(amount, fromItem.count)
+        elseif amount <= 0 then return true
+        end
+    else amount = fromItem.count
     end
 
-    turtle.select(from)
+    inventory.select(from)
     turtle.transferTo(to, amount)
     inventory.update(from)
     inventory.update(to)
@@ -135,18 +136,23 @@ end
 ---@param index   integer
 ---@param amount? integer
 function inventory.drop(index, amount)
-    if not amount or amount < 0 or amount > 64 then amount = inventory.items[index].count end
+    if inventory.items[index].count == 0 then return end
 
-    turtle.select(index)
+    if   amount then
+        if     amount  > 0 then amount = math.min(amount, inventory.items[index].count)
+        elseif amount <= 0 then return
+        end
+    else amount = inventory.items[index].count
+    end
+
+    inventory.select(index)
     turtle.drop(amount)
-
     inventory.update(index)
 end
 
 function inventory.drop_all()
     for index, _ in ipairs(inventory.items) do
-        turtle.select(index)
-        turtle.drop()
+        inventory.drop(index)
     end
 end
 
@@ -222,7 +228,7 @@ local function __()
     setmetatable(inventory.items,
     {
         __newindex = function(table, key, value)
-            error("Attempting to set a non-item value!", 2)
+            error("Index out of range!", 2)
         end
     })
 
