@@ -6,9 +6,9 @@ local inventory = require("/lib/inventory")
 local item      = require("/lib/item")
 
 ---@param  distance integer
----@return boolean
+---@return          boolean
 local function refuel(distance)
-    if distance <= 0 then return false end
+    if distance <= 0 then return true end
 
     inventory.select(config.FuelSlot)
     if not turtle.refuel(0) then error("Invalid fuel source!") end
@@ -21,11 +21,12 @@ local function refuel(distance)
 end
 
 ---@param  distance integer
----@return boolean
+---@return          boolean
 local function refuel_until(distance)
-    return refuel(math.max(distance - turtle.getFuelLevel(), 0))
+    return refuel(distance - turtle.getFuelLevel())
 end
 
+---@param dimensions any
 local function mine_area(dimensions)
     local position              = vector.new()
     local orientation           = terra.Orientation.new()
