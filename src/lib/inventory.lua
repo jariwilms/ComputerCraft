@@ -59,7 +59,7 @@ function inventory.find(identifier)
     return nil
 end
 
----@param  predicate function(_: item): boolean
+---@param  predicate function(_: item) -> boolean
 ---@return           integer?
 function inventory.find_if(predicate)
     for index, value in ipairs(inventory.items) do
@@ -221,10 +221,8 @@ local function __()
 
     setmetatable(inventory.items,
     {
-        __newindex = function(self, k, v)
-            if getmetatable(v) ~= getmetatable(item) then error("Attempting to set a non-item value!", 2) end
-
-            self[k] = v
+        __newindex = function(table, key, value)
+            error("Attempting to set a non-item value!", 2)
         end
     })
 
