@@ -42,17 +42,17 @@ local function mine_area(dimensions)
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
             for _ = 1, dimensions.z - 1 do
-                local success, data = terra.inspect(terra.Direction.Forward)
+                inventory.select(config.InspectSlot)
+                terra.dig(terra.Direction.Forward)
 
-                if success then
-                    success = inventory.select_free_or_empty(data.name)
-
-                    print("Space left in inventory? ", success)
-
-                    terra.dig(terra.Direction.Forward)
+                local stackSlot = inventory.find_free_or_empty(inventory.at(config.InspectSlot).identifier)
+                if stackSlot and stackSlot ~= config.InspectSlot then
+                    inventory.transfer(config.InspectSlot, stackSlot)
+                    terra.move(terra.Movement.Forward, position, orientation)
+                else
+                    print("Depositing items")
+                    error("Not implemented~")
                 end
-
-                terra.move(terra.Movement.Forward, position, orientation)
             end
 
             if _ < dimensions.x then
@@ -136,7 +136,7 @@ local function main(argv, argc)
 
     local volume       = math.volume(dimensions)
     local distance     = math.manhattan_distance(dimensions)
-    local maxDistance  = volume + distance                   --worst case
+    local maxDistance  = volume + distance + 2 --semi worst case (not calculating deposit runs)
     local requiredFuel = maxDistance - turtle.getFuelLevel()
 
     if requiredFuel > 0 then refuel(requiredFuel) end

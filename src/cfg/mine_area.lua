@@ -5,6 +5,7 @@ local config =
 
 	FuelSlot          =  1,
 	BeaconSlot        =  2,
+	InspectSlot       = 16,
 
 	OnChest           = false,
 	PlaceBeacon       = false,
