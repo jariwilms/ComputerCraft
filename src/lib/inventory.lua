@@ -49,11 +49,11 @@ function inventory.find(identifier)
     return nil
 end
 
----@param  predicate function(value: item) -> boolean
+---@param  predicate function(index: integer, value: item) -> boolean
 ---@return           integer?
 function inventory.find_if(predicate)
     for index, value in ipairs(inventory.items) do
-        if predicate(value) then return index end
+        if predicate(index, value) then return index end
     end
 
     return nil
@@ -74,7 +74,7 @@ end
 ---@param identifier string
 ---@return           integer|nil
 function inventory.find_free_or_empty(identifier)
-    local predicate = function(_) return _.identifier == identifier and _.count < _.limit end
+    local predicate = function(index, value) return value.identifier == identifier and value.count < value.limit end
 
     return inventory.find_if(predicate) or inventory.find(item.create_empty().identifier)
 end

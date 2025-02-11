@@ -45,8 +45,13 @@ local function mine_area(dimensions)
                 inventory.select(config.InspectSlot)
                 terra.dig(terra.Direction.Forward)
 
-                local stackSlot = inventory.find_free_or_empty(inventory.at(config.InspectSlot).identifier)
-                if stackSlot and stackSlot ~= config.InspectSlot then
+                local empty = item.create_empty()
+
+                local stackSlot =
+                    inventory.find_if(function(index, value) return value.identifier == inventory.at(config.InspectSlot).identifier and value.count < value.limit and index ~= config.InspectSlot end) or
+                    inventory.find(empty.identifier)
+
+                if stackSlot then
                     inventory.transfer(config.InspectSlot, stackSlot)
                     terra.move(terra.Movement.Forward, position, orientation)
                 else
