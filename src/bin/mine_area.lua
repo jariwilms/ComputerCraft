@@ -5,7 +5,26 @@ local terra     = require("/lib/terra")
 local inventory = require("/lib/inventory")
 local item      = require("/lib/item")
 
+---@param  distance integer
+---@return boolean
+local function refuel(distance)
+    if distance <= 0 then return false end
 
+    inventory.select(config.FuelSlot)
+    if not turtle.refuel(0) then error("Invalid fuel source!") end
+
+    local slot   = inventory.at(config.FuelSlot)
+    local energy = fuel[slot.identifier] or 10
+    local amount = distance / energy
+
+    return turtle.refuel(amount)
+end
+
+---@param  distance integer
+---@return boolean
+local function refuel_until(distance)
+    return refuel(math.max(distance - turtle.getFuelLevel(), 0))
+end
 
 local function mine_area(dimensions)
     local position              = vector.new()
@@ -34,6 +53,18 @@ local function mine_area(dimensions)
     dimensions.x = math.abs(dimensions.x)
     dimensions.y = math.abs(dimensions.y)
     dimensions.z = math.abs(dimensions.z)
+
+
+
+    local volume       = math.volume(dimensions)
+    local distance     = math.manhattan_distance(dimensions)
+    local maxDistance  = volume + (4 * distance) + 2 --Worst case distance heuristic
+
+    if not refuel_until(maxDistance) then error("Not enough fuel!") end
+
+    io.write("Beginning excavation...\n")
+    io.write("Volume: "               .. math.volume(dimensions) .. " blocks\n")
+    io.write("Approximate distance: " .. maxDistance             .. " blocks\n")
 
 
 
@@ -100,25 +131,6 @@ local function validate_confirmation(response, pass, fail, default)
     return false
 end
 
----@param distance integer
-local function refuel(distance)
-    if distance <= 0 then return end
-
-    inventory.select(config.FuelSlot)
-    if not turtle.refuel(0) then error("Invalid fuel source!") end
-
-    local slot   = inventory.at(config.FuelSlot)
-    local energy = fuel[slot.identifier] or 10
-    local amount = distance / energy
-
-    turtle.refuel(amount)
-end
-
----@param distance integer
-local function refuel_until(distance)
-    refuel(math.max(distance - turtle.getFuelLevel(), 0))
-end
-
 local function main(argv, argc)
     term.clear()
     term.setCursorPos(1, 1)
@@ -157,20 +169,6 @@ local function main(argv, argc)
     end
 
 
-
-    local volume       = math.volume(dimensions)
-    local distance     = math.manhattan_distance(dimensions)
-    local maxDistance  = volume + distance + 2 --Worst case not including deposit runs
-
-    refuel_until(maxDistance)
-
-
-
-    term.clear()
-    term.setCursorPos(1, 1)
-
-    io.write("Beginning excavation...\n")
-    io.write("Volume: " .. math.volume(dimensions) .. " blocks.\n")
 
     mine_area(dimensions)
 
