@@ -1,5 +1,5 @@
 local config    = require("/cfg/mine_area")
-local fuel      = require("cfg/fuel")
+local fuel      = require("/cfg/fuel")
 local mathext   = require("/lib/math_ext")
 local terra     = require("/lib/terra")
 local inventory = require("/lib/inventory")
@@ -14,8 +14,6 @@ local function mine_area(dimensions)
 
     local verticalMoveDirection = terra.Movement.Up
     local verticalDigDirection  = terra.Direction.Up
-
-    local empty = item.create_empty()
 
 
 
@@ -58,7 +56,7 @@ local function mine_area(dimensions)
                             index = index + 1
                             return value.identifier == inventory.at(config.InspectSlot).identifier and value.count < value.limit and index ~= config.InspectSlot end
                         ) or
-                        inventory.find(empty.identifier)
+                        inventory.find(item.empty().identifier)
 
                     if stackSlot then
                         inventory.transfer(config.InspectSlot, stackSlot)
@@ -115,8 +113,10 @@ local function refuel(distance)
 
     turtle.refuel(amount)
 end
+
+---@param distance integer
 local function refuel_until(distance)
-    refuel(turtle.getFuelLevel() - distance)
+    refuel(math.max(distance - turtle.getFuelLevel(), 0))
 end
 
 local function main(argv, argc)
