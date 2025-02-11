@@ -17,11 +17,11 @@ local urls =
             dependencies =
             {
                 { url = "src/cfg/mine_area.lua", path = "/cfg/mine_area" },
+                { url = "src/cfg/fuel.lua",      path = "/cfg/fuel"      },
                 { url = "src/lib/math_ext.lua",  path = "/lib/math_ext"  },
                 { url = "src/lib/terra.lua",     path = "/lib/terra"     },
                 { url = "src/lib/inventory.lua", path = "/lib/inventory" },
                 { url = "src/lib/item.lua",      path = "/lib/item"      },
-                { url = "src/lib/meta.lua",      path = "/lib/meta"      },
             },
         },
     },
