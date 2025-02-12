@@ -126,7 +126,7 @@ function Inventory.Defrag()
                 end
 
                 print("Checking if defrag is complete for item")
-                InvData, Slots = Inventory:GetAllItem(data["name"])
+                InvData, Slots = Inventory.GetAllItem(data["name"])
                 local SlotsNotFilled = 0
                 
                 for k=1, Slots do

@@ -1,22 +1,8 @@
 --p_Update
 local args = {...}
+local argc = #arg
 
 --utils
-
-local LogExists = fs.exists("u_Log")
-if not LogExists then --Download u_Log if missing
-	local default = term.current()
-    local x,y = term.getCursorPos()
-    local newWindow = window.create(term.current(), 60, 60, 1, 1)
-    term.redirect(newWindow)
-    shell.run("wget", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Log.lua", "u_Log")
-	term.redirect(default)
-    term.setCursorPos(x,y)
-	
-end
-
-local Log = require("u_Log")
-Log.Init("l_Update",true)
 
 --Globals
 local ReqOnly = false
@@ -29,6 +15,37 @@ if args[1] == "OptionOnly" then
 end
 local programs = {}
 programs = shell.programs()
+
+function Has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end
+
+print("check u_Log")
+sleep(0.5)
+local LogExists = Has_value(programs, "u_Log")
+if not LogExists then --Download u_Log if missing
+	print("download u_Log")
+	sleep(0.5)
+	local default = term.current()
+	local x,y = term.getCursorPos()
+	local newWindow = window.create(term.current(), 60, 60, 1, 1)
+	term.redirect(newWindow)
+	shell.run("wget", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/u_Log.lua", "u_Log")
+	term.redirect(default)
+	term.setCursorPos(x,y)
+	print("download u_Log finished")
+	sleep(0.5)
+end
+print("require u_Log")
+sleep(0.5)
+local Log = require("u_Log")
+Log.Init("l_Update",true)
 
 local InstallList = {}
 
@@ -45,16 +62,17 @@ function InstallOptinal(name, Link)
 end
 
 function InstallReq (name, Link)
-	table.insert(InstallList, {name = name,status = "started"})
+	InstallList[name] = {status = "started"}
 	if Has_value(programs, name) then
 		Log.Log(name.." Is already Installed, deleting and reinstalling")
 		shell.run("delete", name)
 	end
 	local success, errorMsg = Log.Redirect(function () shell.run("wget", Link, name) end)
 	if success then
-	InstallList[name] = "Success"
+	InstallList[name]["status"] = "Success"
+	Log.Log(name.." Is Downloaded")
 	else
-	InstallList[name] = "Error"
+	InstallList[name]["status"] = "Error"
 	Log.LogError(errorMsg)
 	end
 end
@@ -66,16 +84,6 @@ function SetupStartup()
 	local startup = fs.open("startup", "w")
 	startup.writeLine("shell.run(\"KomOS\")")
 	startup.close()
-end
-
-function Has_value (tab, val)
-    for index, value in ipairs(tab) do
-        if value == val then
-            return true
-        end
-    end
-
-    return false
 end
 
 function InstallAllReq()
@@ -98,7 +106,7 @@ function InstallAllReq()
 	
 	--Create startup
 	SetupStartup()
-	sleep(5)
+	sleep(1)
 end
 
 function InstallAllReqParallel()
@@ -123,22 +131,26 @@ function InstallAllReqParallel()
 	
 	--Create startup
 	SetupStartup()
-	sleep(5)
+	sleep(1)
 end
 
 function ShowStatus()
 	while true do
 		term.clear()
+		term.setCursorPos(1,1)
+		print("totall packages: "..tostring(#InstallList))
 		for i, Install in pairs(InstallList) do
-			print(Install.name.."\t - "..Install.status)
+		print(i.."\t - "..InstallList["status"])
 		end
-		sleep(0.05)
+		sleep(0.1)
 	end
 end
 
 --Start
 term.setCursorPos(1, 1)
 term.clear()
+print("start")
+sleep(0.5)
 
 function InstallOptions()
 	InstallOptinal("p_TreeFarm", "https://github.com/jariwilms/ComputerCraft/raw/refs/heads/main/src/KomOS/p_TreeFarm.lua?v=1")
@@ -147,9 +159,13 @@ function InstallOptions()
 end
 
 --Instal requireds (update system)
-if args == nil or ReqOnly == true then
+if argc == 0 or ReqOnly == true then
+	print("Begin download")
+	sleep(0.5)
 	--InstallAllReq()
-	parallel.waitForAny(InstallAllReqParallel(),ShowStatus())
+	--parallel.waitForAny(InstallAllReq,ShowStatus)
+	InstallAllReq()
+	ShowStatus()
 end
 
 --Instal optionals (setup system)
@@ -157,6 +173,8 @@ if OptionOnly == true then
 	InstallOptions()
 end
 
+print("finish")
+sleep(0.5)
 --finish
 term.clear()
 term.setCursorPos(1, 1)
