@@ -1,4 +1,4 @@
-function mineArea(x, y, z)
+function MineArea(x, y, z)
 	io.write("Mining ", x * y * z, " blocks\n")
 	for i = 0, y - 1 do
 		for j = 0, z - 1 do
@@ -36,7 +36,7 @@ function mineArea(x, y, z)
 	io.write("Done")
 end
 
-function canMine(Volume)
+function CanMine(Volume)
 	local FuelLevel = turtle.getFuelLevel()
 	
 	if Volume < FuelLevel then
@@ -48,7 +48,7 @@ function canMine(Volume)
 	end
 end
 
-function getTableLength(Table)
+function GetTableLength(Table)
 	local count = 0
 	for Index in pairs(Table) do 
 		count = count + 1 
@@ -61,8 +61,8 @@ function Setup(...)
 	io.write("Starting Turtle\n")
 	
 	local Argv = {...}
-	TableLength = getTableLength(Argv)
-	local x, y, z = 0, 0, 0
+	TableLength = GetTableLength(Argv)
+	local x, y, z
 	
 	if TableLength == 3 then --If command line arguments were supplied
 		x = Argv[0]
@@ -90,10 +90,10 @@ function Setup(...)
 
 	end
 	
-	local HasSufficientFuel = canMine(x * y * z + y)
+	local HasSufficientFuel = CanMine(x * y * z + y)
 		
 	if HasSufficientFuel then
-		mineArea(x, y, z)
+		MineArea(x, y, z)
 	else
 		shell.run("Refuel")
 	end
