@@ -75,9 +75,7 @@ local function mine_area(dimensions)
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
             for _ = 1, dimensions.z - 1 do
-                local success, data = terra.inspect(terra.Direction.Forward)
-
-                if success then
+                if terra.detect(terra.Direction.Forward) then
                     inventory.select(config.InspectSlot)
                     terra.dig(terra.Direction.Forward)
                     inventory.update(config.InspectSlot)
@@ -85,16 +83,67 @@ local function mine_area(dimensions)
                     local index = 0
                     local stackSlot =
                         inventory.find_if(function(value)
+                            local b = value.identifier == inventory.at(config.InspectSlot).identifier and value.count < value.limit and index ~= config.InspectSlot
                             index = index + 1
-                            return value.identifier == inventory.at(config.InspectSlot).identifier and value.count < value.limit and index ~= config.InspectSlot end
-                        ) or
+
+                            return b
+                        end) or
                         inventory.find(item.empty().identifier)
 
                     if stackSlot then
                         inventory.transfer(config.InspectSlot, stackSlot)
                     else
+                        print("Moving to origin")
+
+                        local currentPosition = { position.x, position.y, position.z }
+
+                        for _ = currentPosition.y, 1, -1 do
+                            terra.move(terra.Direction.Down)
+                        end
+
+                        terra.orient_to(orientation, terra.Orientation.Left)
+
+                        for _ = currentPosition.x, 1, -1 do
+                            terra.move(terra.Direction.Forward)
+                        end
+
+                        terra.orient_to(orientation, terra.Orientation.Backward)
+
+                        for _ = currentPosition.z, 1, -1 do
+                            terra.move(terra.Direction.Forward)
+                        end
+
                         print("Depositing items")
-                        error("Not implemented!")
+                        print("Returning to last position")
+
+
+                        terra.orient_to(orientation, terra.Orientation.Forward)
+
+                        for _ = 1, currentPosition.z do
+                            terra.move(terra.Direction.Forward)
+                        end
+
+                        terra.orient_to(orientation, terra.Orientation.Right)
+
+                        for _ = 1, currentPosition.x do
+                            terra.move(terra.Direction.Forward)
+                        end
+
+                        for _ = 1, currentPosition.y do
+                            terra.move(terra.Direction.Down)
+                        end
+
+                        print("Done")
+                        shell.exit()
+
+
+
+
+
+
+
+
+
                     end
                 end
 
