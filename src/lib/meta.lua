@@ -1,12 +1,12 @@
 local meta =
 {
-    ---@param  _ table
+    ---@param  t table
     ---@return   table
-    read_only = function(_)
+    read_only = function(t)
         local proxy = {}
         local meta =
         {
-            __index    = _,
+            __index    = t,
             __newindex = function (_,__,___) error("attempt to update a read-only table", 2) end
         }
 
