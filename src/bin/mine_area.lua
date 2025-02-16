@@ -95,7 +95,7 @@ local function mine_area(dimensions)
                     else
                         print("Moving to origin")
 
-                        local currentPosition = { position.x, position.y, position.z }
+                        local currentPosition = { x = position.x, y = position.y, z = position.z }
 
                         for _ = currentPosition.y, 1, -1 do
                             terra.move(terra.Direction.Down)
