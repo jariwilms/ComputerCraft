@@ -22,6 +22,7 @@ local urls =
                 { url = "src/lib/terra.lua",     path = "/lib/terra"     },
                 { url = "src/lib/inventory.lua", path = "/lib/inventory" },
                 { url = "src/lib/item.lua",      path = "/lib/item"      },
+                { url = "src/lib/meta.lua",      path = "/lib/meta"      },
             },
         },
     },
