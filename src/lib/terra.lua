@@ -164,15 +164,11 @@ end
 ---@param  direction terra.Direction
 ---@return           boolean
 function terra.dig(direction)
-    if terra.detect(direction) then
-        if     direction == terra.Direction.Forward then return turtle.dig()
-        elseif direction == terra.Direction.Up      then return turtle.digUp()
-        elseif direction == terra.Direction.Down    then return turtle.digDown()
-        else   error("Invalid Direction!")
-        end
+    if     direction == terra.Direction.Forward then return turtle.dig()
+    elseif direction == terra.Direction.Up      then return turtle.digUp()
+    elseif direction == terra.Direction.Down    then return turtle.digDown()
+    else   error("Invalid Direction!")
     end
-
-    return false
 end
 
 ---@param direction terra.Direction
