@@ -80,13 +80,13 @@ local function mine_area(dimensions)
                     terra.dig(terra.Direction.Forward)
                     inventory.update(config.InspectSlot)
 
-                    local index = 0
+                    local index     = 1
                     local stackSlot =
                         inventory.find_if(function(value)
-                            local b = value.identifier == inventory.at(config.InspectSlot).identifier and value.count < value.limit and index ~= config.InspectSlot
+                            local result = value.identifier == inventory.at(config.InspectSlot).identifier and value.count < value.limit and index ~= config.InspectSlot
                             index = index + 1
 
-                            return b
+                            return result
                         end) or
                         inventory.find(item.empty().identifier)
 
