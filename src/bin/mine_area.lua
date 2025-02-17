@@ -98,19 +98,21 @@ local function mine_area(dimensions)
                         local currentPosition = { x = position.x, y = position.y, z = position.z }
 
                         for _ = currentPosition.y, 1, -1 do
-                            terra.move(terra.Direction.Down)
+                            terra.move(terra.Movement.Down)
                         end
 
-                        terra.orient_to(orientation, terra.Orientation.Left)
+                        if currentPosition.x > 0 then terra.orient_to(orientation, terra.Orientation.Left)
+                        else                          terra.orient_to(orientation, terra.Orientation.Right)
+                        end
 
                         for _ = currentPosition.x, 1, -1 do
-                            terra.move(terra.Direction.Forward)
+                            terra.move(terra.Movement.Forward)
                         end
 
                         terra.orient_to(orientation, terra.Orientation.Backward)
 
                         for _ = currentPosition.z, 1, -1 do
-                            terra.move(terra.Direction.Forward)
+                            terra.move(terra.Movement.Forward)
                         end
 
                         print("Depositing items")
@@ -120,20 +122,21 @@ local function mine_area(dimensions)
                         terra.orient_to(orientation, terra.Orientation.Forward)
 
                         for _ = 1, currentPosition.z do
-                            terra.move(terra.Direction.Forward)
+                            terra.move(terra.Movement.Forward)
                         end
 
                         terra.orient_to(orientation, terra.Orientation.Right)
 
                         for _ = 1, currentPosition.x do
-                            terra.move(terra.Direction.Forward)
+                            terra.move(terra.Movement.Forward)
                         end
 
                         for _ = 1, currentPosition.y do
-                            terra.move(terra.Direction.Down)
+                            terra.move(terra.Movement.Up)
                         end
 
                         print("Done")
+
                     end
                 end
 
