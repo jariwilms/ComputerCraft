@@ -147,11 +147,15 @@ end
 ---@param current terra.Orientation ---Reference
 ---@param target  terra.Orientation
 function terra.orient_to(current, target)
-    local difference = current[0] - target
-    local rotation   = difference > 0 and terra.Rotation.Left or terra.Rotation.Right
+    local difference  = (target - current[0]) % 4
 
-    for _ = 1, difference, 1 do
-        terra.rotate(rotation, current)
+    if     difference == 0 then return
+    elseif difference <= 2 then
+        for _ = 1, difference do
+            terra.rotate(terra.Rotation.Left)
+        end
+    else
+        terra.rotate(terra.Rotation.Right)
     end
 end
 
