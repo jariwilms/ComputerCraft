@@ -134,16 +134,6 @@ local function mine_area(dimensions)
                         end
 
                         print("Done")
-                        shell.exit()
-
-
-
-
-
-
-
-
-
                     end
                 end
 
