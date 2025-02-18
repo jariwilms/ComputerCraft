@@ -4,6 +4,7 @@ local mathext   = require("/lib/math_ext")
 local terra     = require("/lib/terra")
 local inventory = require("/lib/inventory")
 local item      = require("/lib/item")
+local cmd       = require("/lib/cmd_utils")
 
 ---@param  distance integer
 ---@return          boolean
@@ -26,8 +27,15 @@ local function refuel_until(distance)
     return refuel(distance - turtle.getFuelLevel())
 end
 
+local function validate_inventory()
+    if not fuel[inventory.at(1).identifier]                     then error("Fuel slot does not contain a valid fuel source!") end
+    if inventory.at(2).identifier ~= "minecraft:redstone_torch" then error("Beacon slot does not contain a valid item!")      end
+end
+
 ---@param dimensions any
 local function mine_volume(dimensions)
+    if dimensions.x == 0 or dimensions.y == 0 or dimensions.z == 0 then error("Dimensions may not be 0!") end
+
     local position              = vector.new()
     local orientation           = terra.Orientation.new()
     local rotation              = terra.Rotation.Right
@@ -37,6 +45,7 @@ local function mine_volume(dimensions)
 
 
 
+    --Adjust initial setup according to given dimensions
     if dimensions.z < 0 then
         terra.rotate(terra.Rotation.Left)
         terra.rotate(terra.Rotation.Left)
@@ -57,30 +66,31 @@ local function mine_volume(dimensions)
 
 
 
-    local volume       = math.volume(dimensions)
-    local distance     = math.manhattan_distance(dimensions)
-    local maxDistance  = volume + (4 * distance) + 2 --Fairly pessimistic distance heuristic
+    local volume        = math.volume(dimensions)
+    local distance      = math.manhattan_distance(dimensions)
+    local totalDistance = volume + distance + 2
 
-    if not refuel_until(maxDistance) then error("Not enough fuel!") end
+    if not refuel_until(totalDistance) then error("Not enough fuel!") end
 
     io.write("Beginning excavation...\n")
-    io.write("Quarry volume: "               .. math.volume(dimensions) .. " blocks\n")
+    io.write("Volume: " .. volume .. " blocks\n")
 
 
 
+    --Move into the to-be-mined volume
     terra.dig(terra.Direction.Forward)
     terra.move(terra.Movement.Forward)
 
     for _ = 1, dimensions.y do
         for _ = 1, dimensions.x do
             for _ = 1, dimensions.z - 1 do
-                if terra.detect(terra.Direction.Forward) then
+                while terra.detect(terra.Direction.Forward) do
                     inventory.select(config.InspectSlot)
                     terra.dig(terra.Direction.Forward)
                     inventory.update(config.InspectSlot)
 
                     local index     = 1
-                    local stackSlot =
+                    local destinationSlot =
                         inventory.find_if(function(value)
                             local result = value.identifier == inventory.at(config.InspectSlot).identifier and value.count < value.limit and index ~= config.InspectSlot
                             index = index + 1
@@ -89,8 +99,8 @@ local function mine_volume(dimensions)
                         end) or
                         inventory.find(item.empty().identifier)
 
-                    if stackSlot then
-                        inventory.transfer(config.InspectSlot, stackSlot)
+                    if destinationSlot then
+                        inventory.transfer(config.InspectSlot, destinationSlot)
                     else
                         print("Moving to origin")
 
@@ -161,19 +171,13 @@ local function mine_volume(dimensions)
             terra.rotate(terra.Rotation.Left, orientation)
         end
     end
+
+    io.write("Excavation complete.\n")
 end
 
-local function validate_confirmation(response, pass, fail, default)
-    local response = string.lower(response)
 
-    if  response == string.lower(pass) then return true    end
-    if  response == string.lower(fail) then return false   end
-    if #response == 0                  then return default end
 
-    return false
-end
-
-local function main(argv, argc)
+local function main(args)
     term.clear()
     term.setCursorPos(1, 1)
 
@@ -183,43 +187,59 @@ local function main(argv, argc)
 
     local dimensions = vector.new()
     local keys       = { "x", "y", "z" }
+    local repeating  = false
 
-    if     argc == 3 then
-        for index, value in ipairs(keys) do
-            dimensions[value] = math.floor(argv[index])
+    repeat
+        if repeating then term.clear(); term.setCursorPos(1, 1)
+        else              repeating = true
         end
-    elseif argc == 0 then
-        while true do
+
+        if     args["d"] and #args["d"] == 3 then
+            for index, value in ipairs(args["d"]) do
+                dimensions[keys[index]] = math.floor(value)
+            end
+        elseif args["t"] and #args["t"] == 1 then
+            dimensions.x = 1
+            dimensions.y = 2
+            dimensions.z = args["t"][1]
+        else
             for _, value in ipairs(keys) do
                 io.write("Enter " .. value .. " coordinate: ")
                 dimensions[value] = math.floor(read())
             end
-
-            io.write("Is the turtle on a chest? [y/N] ")
-            config.OnChest = validate_confirmation(read(), "y", "n", false)
-
-            io.write("Dimensions: <", dimensions:tostring(),    ">\n")
-            io.write("OnChest:    ",  tostring(config.OnChest),  "\n")
-            io.write("\n")
-
-            io.write("Is this correct? [Y/n] ")
-            if validate_confirmation(read(), "y", "n", true) then break
-            else term.clear(); term.setCursorPos(1, 1)
-            end
         end
-    else   error("Invalid number of arguments!\nExpected: 3, Received: ", argc)
-    end
+
+        if     args["c"]   then
+            config.OnChest = true
+        elseif args["nc"]  then
+            config.OnChest = false
+        else
+            io.write("Is the turtle on a chest? [y/N] ")
+            config.OnChest = cmd.validate_confirmation(read(), "y", "n", false)
+        end
+
+        if     args["b"]   then
+            config.PlaceBeacon = true
+        elseif args["nb"]  then
+            config.PlaceBeacon = false
+        else
+            io.write("Should the turtle place a beacon? [y/N] ")
+            config.PlaceBeacon = cmd.validate_confirmation(read(), "y", "n", false)
+        end
+
+        io.write("Dimensions:   <", dimensions:tostring(),       ">\n")
+        io.write("On chest:     ",  tostring(config.OnChest),     "\n")
+        io.write("Place beacon: ",  tostring(config.PlaceBeacon), "\n")
+        io.write("\n")
+
+        io.write("Is this correct? [Y/n] ")
+    until cmd.validate_confirmation(read(), "y", "n", true)
 
 
 
     mine_volume(dimensions)
-
-    io.write("Excavation complete.\n")
 end
 
 
 
-local argv = {...}
-local argc = #argv
-
-main(argv, argc)
+main(cmd.parse_arguments({...}))
