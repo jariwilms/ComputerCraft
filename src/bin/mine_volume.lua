@@ -1,4 +1,4 @@
-local config    = require("/cfg/mine_area")
+local config    = require("/cfg/mine_volume")
 local fuel      = require("/cfg/fuel")
 local mathext   = require("/lib/math_ext")
 local terra     = require("/lib/terra")
@@ -14,7 +14,7 @@ local function refuel(distance)
     if not turtle.refuel(0) then error("Invalid fuel source!") end
 
     local slot   = inventory.at(config.FuelSlot)
-    local energy = fuel[slot.identifier] or 10
+    local energy = fuel[slot.identifier] or fuel.DefaultBurnTime --May severely overestimate
     local amount = distance / energy
 
     return turtle.refuel(amount)
@@ -27,7 +27,7 @@ local function refuel_until(distance)
 end
 
 ---@param dimensions any
-local function mine_area(dimensions)
+local function mine_volume(dimensions)
     local position              = vector.new()
     local orientation           = terra.Orientation.new()
     local rotation              = terra.Rotation.Right
@@ -59,13 +59,12 @@ local function mine_area(dimensions)
 
     local volume       = math.volume(dimensions)
     local distance     = math.manhattan_distance(dimensions)
-    local maxDistance  = volume + (4 * distance) + 2 --Worst case distance heuristic
+    local maxDistance  = volume + (4 * distance) + 2 --Fairly pessimistic distance heuristic
 
     if not refuel_until(maxDistance) then error("Not enough fuel!") end
 
     io.write("Beginning excavation...\n")
-    io.write("Volume: "               .. math.volume(dimensions) .. " blocks\n")
-    io.write("Approximate distance: " .. maxDistance             .. " blocks\n")
+    io.write("Quarry volume: "               .. math.volume(dimensions) .. " blocks\n")
 
 
 
@@ -213,7 +212,7 @@ local function main(argv, argc)
 
 
 
-    mine_area(dimensions)
+    mine_volume(dimensions)
 
     io.write("Excavation complete.\n")
 end
