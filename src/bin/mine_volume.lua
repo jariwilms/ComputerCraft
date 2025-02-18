@@ -81,33 +81,38 @@ local function mine_volume(dimensions)
     terra.dig(terra.Direction.Forward)
     terra.move(terra.Movement.Forward)
 
-    for _ = 1, dimensions.y do
-        for _ = 1, dimensions.x do
-            for _ = 1, dimensions.z - 1 do
-                while terra.detect(terra.Direction.Forward) do
-                    inventory.select(config.InspectSlot)
-                    terra.dig(terra.Direction.Forward)
-                    inventory.update(config.InspectSlot)
 
-                    local index     = 1
-                    local destinationSlot =
-                        inventory.find_if(function(value)
-                            local result = value.identifier == inventory.at(config.InspectSlot).identifier and value.count < value.limit and index ~= config.InspectSlot
-                            index = index + 1
 
-                            return result
-                        end) or
-                        inventory.find(item.empty().identifier)
-
-                    if destinationSlot then
+    --for _ = 1, dimensions.y do
+    --    for _ = 1, dimensions.x do
+    --        for _ = 1, dimensions.z - 1 do
+    --            while terra.detect(terra.Direction.Forward) do
+    --                inventory.select(config.InspectSlot)
+    --                terra.dig(terra.Direction.Forward)
+    --                inventory.update(config.InspectSlot)
+--
+    --                local index           = 1
+    --                local destinationSlot =
+    --                    inventory.find_if(function(value)
+    --                        local result = value.identifier == inventory.at(config.InspectSlot).identifier and value.count < value.limit and index ~= config.InspectSlot
+    --                        index = index + 1
+--
+    --                        return result
+    --                    end) or
+    --                    inventory.find(item.empty().identifier)
+--
+    --                if destinationSlot then
                         inventory.transfer(config.InspectSlot, destinationSlot)
-                    else
+    --                else
                         print("Moving to origin")
 
-                        local currentPosition = { x = position.x, y = position.y, z = position.z }
+                        local currentPosition = { x = 2, y = 2, z = 3 }
+                        print("currentPosition: <2, 2, 3>")
+                        --local currentPosition = { x = position.x, y = position.y, z = position.z }
 
                         for _ = currentPosition.y, 1, -1 do
                             terra.move(terra.Movement.Down)
+                            print("Moved down"); os.sleep(1)
                         end
 
                         if currentPosition.x > 0 then terra.orient_to(orientation, terra.Orientation.Left)
@@ -116,12 +121,14 @@ local function mine_volume(dimensions)
 
                         for _ = currentPosition.x, 1, -1 do
                             terra.move(terra.Movement.Forward)
+                            print("Moved forward"); os.sleep(1)
                         end
 
                         terra.orient_to(orientation, terra.Orientation.Backward)
 
                         for _ = currentPosition.z, 1, -1 do
                             terra.move(terra.Movement.Forward)
+                            print("Moved forward"); os.sleep(1)
                         end
 
                         print("Depositing items")
@@ -132,27 +139,30 @@ local function mine_volume(dimensions)
 
                         for _ = 1, currentPosition.z do
                             terra.move(terra.Movement.Forward)
+                            print("Moved forward"); os.sleep(1)
                         end
 
                         terra.orient_to(orientation, terra.Orientation.Right)
 
                         for _ = 1, currentPosition.x do
                             terra.move(terra.Movement.Forward)
+                            print("Moved forward"); os.sleep(1)
                         end
 
                         for _ = 1, currentPosition.y do
                             terra.move(terra.Movement.Up)
+                            print("Moved Up"); os.sleep(1)
                         end
 
                         print("Done")
-
-                    end
-                end
-
-                terra.move(terra.Movement.Forward, position, orientation)
-            end
-
-            if _ < dimensions.x then
+                        os.sleep(10)
+    --                end
+    --            end
+--
+    --            terra.move(terra.Movement.Forward, position, orientation)
+    --        end
+--
+    --        if _ < dimensions.x then
                 terra.rotate(rotation, orientation)
                 terra.dig(terra.Direction.Forward)
                 terra.move(terra.Movement.Forward, position, orientation)
@@ -161,16 +171,16 @@ local function mine_volume(dimensions)
                 if     rotation == terra.Rotation.Left  then rotation = terra.Rotation.Right
                 elseif rotation == terra.Rotation.Right then rotation = terra.Rotation.Left
                 end
-            end
-        end
-
-        if _ < dimensions.y then
+    --        end
+    --    end
+--
+    --    if _ < dimensions.y then
             terra.dig(verticalDigDirection)
             terra.move(verticalMoveDirection, position, orientation)
             terra.rotate(terra.Rotation.Left, orientation)
             terra.rotate(terra.Rotation.Left, orientation)
-        end
-    end
+    --    end
+    --end
 
     io.write("Excavation complete.\n")
 end
