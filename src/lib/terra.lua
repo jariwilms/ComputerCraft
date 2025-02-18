@@ -157,6 +157,8 @@ function terra.orient_to(current, target)
     else
         terra.rotate(terra.Rotation.Right)
     end
+
+    current[0] = target
 end
 
 ---@param  rotation     terra.Rotation
