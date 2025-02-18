@@ -9,8 +9,9 @@ local function main()
     }
     local programs =
     {
-        git_clone_bin = { path = "bin/git_clone", url = [[https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/src/bin/git_clone.lua]] },
-        git_clone_cfg = { path = "cfg/git_clone", url = [[https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/src/cfg/git_clone.lua]] },
+        git_clone_bin = { path = "/bin/git_clone", url = [[https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/src/bin/git_clone.lua]] },
+        git_clone_cfg = { path = "/cfg/git_clone", url = [[https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/src/cfg/git_clone.lua]] },
+        git_clone_cmd = { path = "/lib/cmd_utils", url = [[https://raw.githubusercontent.com/jariwilms/ComputerCraft/refs/heads/main/src/lib/cmd_utils.lua]] },
     }
 
     for _, value in ipairs(directories) do
