@@ -36,21 +36,35 @@
     function ScanAllChest()
         chests = {peripheral.find("create:item_vault")}
         TotalList = {}
+
+        Log.ClearLog()
+        Log.Log(tostring(#chests).." chests found")
+        for i = 1, #chests do
+            local chestItems = chests[i].list()
+            for j=1, #chestItems do
+                if chestItems[j] ~= nil then
+                    Log.Log(chestItems[j]["name"].." - "..tostring(chestItems[j]["count"]))
+                    AddToTotalList(chestItems[j]["name"], chestItems[j]["count"])
+                end
+            end
+            Log.Log(tostring(#chestItems).." items added")
+        end
+    end
+
+    function ScanAllChestDisplay()
+        DisplayList = {}
         TotalCapacity = 0
         CurrentCapacity = 0
 
-        Log.Log(tostring(#chests).." chests found")
         for i = 1, #chests do
             local chestItems = chests[i].list()
             TotalCapacity = TotalCapacity + chests[i].size()
             for j=1, #chestItems do
                 if chestItems[j] ~= nil then
-                    print(chestItems[j]["name"])
-                    AddToTotalList(chestItems[j]["name"], chestItems[j]["count"])
+                    AddToDisplayList(chestItems[j]["name"], chestItems[j]["count"])
                     CurrentCapacity = CurrentCapacity+1
                 end
             end
-            Log.Log(tostring(#chestItems).." items added")
         end
     end
 
@@ -65,6 +79,21 @@
         end
         table.insert(TotalList, {name = ItemName, count = ItemCount})
         return true
+    end
+
+    function AddToDisplayList(ItemName, ItemCount)
+        if (filter == "" or string.find(ItemName, filter)) and ItemCount >= minCount then
+            if DisplayList then
+                for index, value in pairs(DisplayList) do
+                    if value["name"] == ItemName then
+                        value["count"] = value["count"] + ItemCount
+                        return true
+                    end
+                end
+            end
+            table.insert(TotalList, {name = ItemName, count = ItemCount})
+            return true
+        end
     end
 
     function PrintTotalList()
@@ -131,6 +160,7 @@
                 local XTable, yTable = WindowTable.getSize()
                 term.redirect(WindowTable)
                 paintutils.drawFilledBox(2,2,XTable-1,yTable-1,colors.gray)
+
                 for i = 1, yTable-2 do
                     WindowTable.setBackgroundColor(colors.gray)
                     if i % 2 == 0 then
@@ -147,27 +177,15 @@
                     end
                 end
             end
+
             Scroll = Scroll + ItemsPerTab*TabAmount
             if Scroll > #DisplayList then
                 Scroll = 0
             end
+
             sleep(5)
             term.redirect(defaultTerm)
-            ScanAllChest()
-            FilterList()
-        end
-    end
-
-    function FilterList()
-        DisplayList = {}
-        if filter ~= "" then
-            for i = 1, #TotalList do
-                if string.find(TotalList[i]["name"], filter) then
-                    table.insert(DisplayList, TotalList[i])
-                end
-            end
-        else
-            DisplayList = TotalList
+            ScanAllChestDisplay()
         end
     end
 
@@ -180,7 +198,7 @@
         for word in String:gmatch("%w+") do table.insert(Args, word) end
         local Command = Args[0]
         local Content = Args[1]
-        local Count = Args[2]
+        local Count = tonumber(Args[2])
         return Command, Content, Count
     end
 
@@ -218,7 +236,8 @@
         while Run do
             local Input = read()
             local Command, Content, Count = ParseCommand(Input)
-            if string.starts(Command, "Get") then
+
+            if Command == "Get" then
                 local success, ActualCount = CheckAvailability(Content, Count)
                 if success then
                     FetchItems(Content, Count)
@@ -226,19 +245,27 @@
                     Log.LogError("Given Count ("..tostring(Count)..") is bigger than amount in storage ("..tostring(ActualCount)..")")
                 end
             end
-            if string.starts(Command, "Filter") then
+
+            if Command == "Filter" then
                 local ContentAsNumber = tonumber(Content)
                 if ContentAsNumber then
                     minCount = ContentAsNumber
                 else
-                    filter = Content
+                    if Content then
+                        filter = Content
+                    end
+                    if Count then
+                        minCount = Count
+                    end
                 end
             end
-            if string.starts(Command, "Reset") then
+
+            if Command == "Reset" then
                 filter = ""
                 minCount = 0
             end
-            if string.starts(Command, "Stop") then
+
+            if Command == "Stop" then
                 return
             end
         end
