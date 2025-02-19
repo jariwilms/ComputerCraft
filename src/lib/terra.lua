@@ -147,12 +147,18 @@ end
 ---@param current terra.Orientation ---Reference
 ---@param target  terra.Orientation
 function terra.orient_to(current, target)
-    local difference = current[0] - target
-    local rotation   = difference > 0 and terra.Rotation.Left or terra.Rotation.Right
+    local difference  = (target - current[0]) % 4
 
-    for _ = 1, difference, 1 do
-        terra.rotate(rotation, current)
+    if     difference == 0 then return
+    elseif difference <= 2 then
+        for _ = 1, difference do
+            terra.rotate(terra.Rotation.Left)
+        end
+    else
+        terra.rotate(terra.Rotation.Right)
     end
+
+    current[0] = target
 end
 
 ---@param  rotation     terra.Rotation
@@ -164,15 +170,11 @@ end
 ---@param  direction terra.Direction
 ---@return           boolean
 function terra.dig(direction)
-    if terra.detect(direction) then
-        if     direction == terra.Direction.Forward then return turtle.dig()
-        elseif direction == terra.Direction.Up      then return turtle.digUp()
-        elseif direction == terra.Direction.Down    then return turtle.digDown()
-        else   error("Invalid Direction!")
-        end
+    if     direction == terra.Direction.Forward then return turtle.dig()
+    elseif direction == terra.Direction.Up      then return turtle.digUp()
+    elseif direction == terra.Direction.Down    then return turtle.digDown()
+    else   error("Invalid Direction!")
     end
-
-    return false
 end
 
 ---@param direction terra.Direction

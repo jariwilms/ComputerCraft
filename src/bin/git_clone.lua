@@ -1,24 +1,12 @@
 local config = require("/cfg/git_clone")
+local cmd    = require("/lib/cmd_utils")
 
 local argv = {...}
 local argc = #argv
 
 local downloaded = {}
 
-local function parse_flags(flags)
-	local map = {}
 
-	for _, value in ipairs(flags) do
-		if string.sub(value, 1, 1) == "-" then
-			for i = 2, #value do
-				map[string.lower(string.sub(value, i, i))] = true
-			end
-		else error("Invalid argument!")
-		end
-	end
-
-	return map
-end
 
 local function install(base, data, force)
 	local url          = base .. data.url
@@ -46,7 +34,7 @@ local function main()
 	term.clear()
 	term.setCursorPos(1, 1)
 
-	local flags      = parse_flags(argv)
+	local flags      = cmd.parse_arguments(argv)
 	local force      = flags["f"]
 	local optional   = flags["o"]
 	local repository = config.repository
