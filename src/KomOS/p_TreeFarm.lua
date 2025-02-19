@@ -52,9 +52,9 @@ function IsthereTreeUp()
 end
 
 function IsLeavesForward()
-	local success, data = turtle.inspectUp()
+	local success, data = turtle.inspect()
 	if success then
-		if string.find(data.name,"leaves") then
+		if string.find(data.name,"eaves") then
 			return true
 		end
 	end
@@ -80,7 +80,8 @@ function CutTree()
 	
 	turtle.select(16)
 	turtle.placeDown()
-	
+	turtle.suckDown()
+
 	if IsthereTreeInFront() then
 		CutTree()
 	end
