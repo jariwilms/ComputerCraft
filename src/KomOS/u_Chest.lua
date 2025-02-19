@@ -10,7 +10,7 @@ local Chest = {
 --functions
 function Chest.Init(Inventory)
     local givenType = peripheral.getType(Inventory)
-    if givenType == "inventory" then
+    if string.find(givenType, "inventory") then
         Chest.ChestInventory = Inventory
     end
 end
@@ -26,7 +26,7 @@ function Chest.GetDetailedInvParallel() --return InvData{name, count, displayNam
     local Funcs = {}
     local InvData = {}
     for i=1, Chest.ChestInventory.size() do
-        table.insert(Funcs, function() Chest.GetInvSlot(i,InvData) end)
+        table.insert(Funcs, i, function() Chest.GetInvSlot(i,InvData) end)
     end
     parallel.waitForAll(table.unpack(Funcs))
     return InvData
@@ -38,7 +38,7 @@ function Chest.GetSimpleInv() --return table{name, count}
 end
 
 function Chest.GetFirstItem(Item) --return found, slot, count
-    local list = Chest.ChestInventory.list()
+    local list = Chest.GetDetailedInvParallel()
     for i=1, #list do
         local data = list[i]
         if data then
