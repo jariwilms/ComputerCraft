@@ -11,6 +11,7 @@
     if not fs.exists("c_Storage") then
         ConfigFile = fs.open("c_Storage", "w")
         ConfigFile.writeLine("Output: minecraft:barrel_0")
+        ConfigFile.writeLine("Input: minecraft:barrel_0")
         ConfigFile.close()
     end
 
@@ -214,7 +215,12 @@
                 Scroll = 0
             end
             term.redirect(defaultTerm)
-            sleep(2)
+            if #DisplayList > ItemsPerTab*TabAmount then
+                sleep(3)
+            else
+                sleep(1)
+            end
+            
         end
     end
 
