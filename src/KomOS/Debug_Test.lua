@@ -18,15 +18,17 @@
 
     --Global
     local monitor = peripheral.wrap("top")
-    local chests = {peripheral.find("inventory")}
-    local Output = Config:getData("Output")
+    --local chests = {peripheral.find("inventory")}
+    local Output
     local item = {name = "", count = 0}
     local TotalList = {}
     local TotalCapacity = 0
     local CurrentCapacity = 0
     local DisplayList = {}
+    local AutoFillNames = {}
     local filter = ""
     local minCount = 0
+    local defaultTerm = term.current()
 
     --Data
 
@@ -34,7 +36,7 @@
 
     --Functionw2
     function ScanAllChest()
-        chests = {peripheral.find("create:item_vault")}
+        local chests = {peripheral.find("create:item_vault")}
         TotalList = {}
 
         Log.ClearLog()
@@ -45,6 +47,7 @@
                 if chestItems[j] ~= nil then
                     Log.Log(chestItems[j]["name"].." - "..tostring(chestItems[j]["count"]))
                     AddToTotalList(chestItems[j]["name"], chestItems[j]["count"])
+                    
                 end
             end
             Log.Log(tostring(#chestItems).." items added")
@@ -52,6 +55,7 @@
     end
 
     function ScanAllChestDisplay()
+        local chests = {peripheral.find("create:item_vault")}
         DisplayList = {}
         TotalCapacity = 0
         CurrentCapacity = 0
@@ -91,9 +95,26 @@
                     end
                 end
             end
-            table.insert(TotalList, {name = ItemName, count = ItemCount})
+            table.insert(DisplayList, {name = ItemName, count = ItemCount})
             return true
         end
+    end
+
+    function GetInvSlot(Chest, idx, InvData)
+        local data = Chest.getItemDetail(idx)
+        if data ~= nil then
+            table.insert(InvData, data)
+        end
+    end
+
+    function GetDetailedInvFast(Chest) --return InvData{name, count, displayName, damage, maxDamage, durability}
+        local Funcs = {}
+        local InvData = {}
+        for i=1, Chest.size() do
+            table.insert(Funcs, i, function() GetInvSlot(Chest, i, InvData) end)
+        end
+        parallel.waitForAll(table.unpack(Funcs))
+        return InvData
     end
 
     function PrintTotalList()
@@ -105,16 +126,26 @@
     end
 
     --Main
-    ScanAllChest()
-    PrintTotalList()
+    --ScanAllChest()
+    --PrintTotalList()
+
+    function SetupOutput()
+        Output = peripheral.wrap(Config:getData("Output"))
+        Log.TermLog("Output: "..Config:getData("Output"))
+        if not Output then
+            Log.LogError("Output not found")
+        end
+    end
 
     function DrawMonitor()
         monitor.setTextScale(0.5)
         local xsize,ysize = monitor.getSize()
-        local defaultTerm = term.current()
         local Scroll = 0
         local Run = true
         while Run do
+
+            ScanAllChestDisplay()
+
             --Create Background window
             local WindowBackground = window.create(monitor, 1, 1, xsize, ysize)
             WindowBackground.setBackgroundColor(colors.gray)
@@ -182,10 +213,8 @@
             if Scroll > #DisplayList then
                 Scroll = 0
             end
-
-            sleep(5)
             term.redirect(defaultTerm)
-            ScanAllChestDisplay()
+            sleep(2)
         end
     end
 
@@ -194,26 +223,27 @@
     end
 
     function ParseCommand(String)
-        local Args
-        for word in String:gmatch("%w+") do table.insert(Args, word) end
-        local Command = Args[0]
-        local Content = Args[1]
-        local Count = tonumber(Args[2])
+        local Args = {}
+        for word in String:gmatch("%S+") do table.insert(Args, word) end
+        local Command = Args[1]
+        local Content = Args[2]
+        local Count = tonumber(Args[3])
         return Command, Content, Count
     end
 
     function FetchItems(Name, Count)
-        local CountReturned
+        local CountReturned = 0
+        local chests = {peripheral.find("create:item_vault")}
         for i, Chest in pairs(chests) do
-            local InvData = Chest.GetDetailedInvParallel()
-            for j, Item in pairs(InvData) do
-                if Item then
-                    if string.find(Name, Item["name"]) then
+            local InvData = Chest.list()
+            if InvData then
+                for j, Item in pairs(InvData) do
+                    if string.find(Item["name"], Name) then
                         if Item["count"] < (Count - CountReturned) then
-                            Output.pullItems(Chest, j, Item["count"])
+                            Output.pullItems(peripheral.getName(Chest), j, Item["count"])
                             CountReturned = CountReturned + Item["count"]
                         else
-                            Output.pullItems(Chest, j, Count - CountReturned)
+                            Output.pullItems(peripheral.getName(Chest), j, Count - CountReturned)
                             CountReturned = Count
                             return
                         end
@@ -225,28 +255,31 @@
 
     function CheckAvailability(Name, Count)
         for i, Item in pairs(TotalList) do
-            if string.find(Name, Item["name"]) then
+            if string.find(Item["name"], Name) then
                 return Count <= Item["count"], Item["count"]
             end
         end
+        Log.TermError("Given Item not found in storage")
     end
 
     function Stop()
         local Run = true
         while Run do
+            ScanAllChest()
+            term.redirect(defaultTerm)
             local Input = read()
             local Command, Content, Count = ParseCommand(Input)
 
-            if Command == "Get" then
+            if Command == "get" then
                 local success, ActualCount = CheckAvailability(Content, Count)
                 if success then
                     FetchItems(Content, Count)
                 else
-                    Log.LogError("Given Count ("..tostring(Count)..") is bigger than amount in storage ("..tostring(ActualCount)..")")
+                    Log.TermError("Given Count ("..tostring(Count)..") is bigger than amount in storage ("..tostring(ActualCount)..")")
                 end
             end
 
-            if Command == "Filter" then
+            if Command == "filter" then
                 local ContentAsNumber = tonumber(Content)
                 if ContentAsNumber then
                     minCount = ContentAsNumber
@@ -260,16 +293,17 @@
                 end
             end
 
-            if Command == "Reset" then
+            if Command == "reset" then
                 filter = ""
                 minCount = 0
             end
 
-            if Command == "Stop" then
+            if Command == "stop" then
                 return
             end
         end
     end
 
+    SetupOutput()
     --print("farming...\n <press any key to stop>")
     parallel.waitForAny(DrawMonitor, Stop)
